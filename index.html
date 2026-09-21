@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CBD Management System</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f4f6f9;color:#182230}
+button,input,select{font:inherit}.hidden{display:none}
+.login{min-height:100vh;display:grid;place-items:center;background:linear-gradient(135deg,#152238,#304d73)}
+.card{background:#fff;border-radius:18px;padding:30px;box-shadow:0 18px 50px #0003}.login .card{width:min(420px,92vw)}
+h1,h2,h3{margin-top:0}.brand{font-size:25px;font-weight:800;margin-bottom:8px}.muted{color:#6b7280}
+label{display:block;font-size:13px;font-weight:700;margin:14px 0 6px}input,select{width:100%;padding:11px 12px;border:1px solid #d8dee8;border-radius:9px;background:#fff}
+.btn{border:0;border-radius:9px;padding:11px 15px;cursor:pointer;font-weight:700}.primary{background:#1f6feb;color:#fff}.dark{background:#172033;color:#fff}.danger{background:#d92d20;color:#fff}
+#app{display:none;min-height:100vh}.top{height:66px;background:#fff;border-bottom:1px solid #e4e7ec;display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:5}.layout{display:flex}.side{width:225px;background:#172033;color:#fff;min-height:calc(100vh - 66px);padding:15px}.nav{padding:12px 13px;border-radius:9px;cursor:pointer;margin-bottom:5px;color:#dbe4f0}.nav.active,.nav:hover{background:#2b3b55;color:#fff}.main{flex:1;padding:22px;max-width:1500px;margin:auto;width:100%}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}.kpi{background:#fff;border:1px solid #e5e9f0;border-radius:14px;padding:17px}.kpi .v{font-size:25px;font-weight:800;margin-top:7px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.panel{background:#fff;border:1px solid #e5e9f0;border-radius:14px;padding:18px}.chartbox{height:320px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}.toolbar>*{width:auto}.tablewrap{overflow:auto;max-height:520px;border:1px solid #e5e9f0;border-radius:10px}table{border-collapse:collapse;width:100%;min-width:900px}th,td{padding:10px;border-bottom:1px solid #edf0f4;text-align:left;font-size:13px}th{background:#f7f8fa;position:sticky;top:0}.msg{margin-top:10px;color:#b42318}
+@media(max-width:900px){.side{width:70px}.nav{font-size:0;text-align:center}.nav:before{content:'•';font-size:22px}.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+@media(max-width:600px){.side{display:none}.main{padding:12px}.kpis{grid-template-columns:1fr}.top{padding:0 12px}}
+</style>
+</head>
+<body>
+<div id="login" class="login"><div class="card">
+  <div class="brand">CBD Management System</div><div class="muted">CFO • CBD • Actuals • Operations</div>
+  <label>Email</label><input id="email" value="admin@local">
+  <label>Password</label><input id="password" type="password" value="admin123">
+  <button class="btn primary" style="width:100%;margin-top:18px" onclick="doLogin()">Sign In</button>
+  <div id="loginMsg" class="msg"></div>
+</div></div>
+
+<div id="app">
+<header class="top"><div><b>CBD Management System</b><div class="muted" id="welcome"></div></div><button class="btn dark" onclick="logout()">Logout</button></header>
+<div class="layout"><aside class="side">
+<div class="nav active" onclick="showPage('dashboard',this)">Dashboard</div>
+<div class="nav" onclick="showPage('articles',this)">Articles</div>
+<div class="nav" onclick="showPage('orders',this)">Orders</div>
+<div class="nav" onclick="showPage('dispatch',this)">Dispatch</div>
+<div class="nav" onclick="showPage('actuals',this)">Actuals</div>
+<div class="nav" onclick="showPage('reports',this)">Reports</div>
+</aside>
+<main class="main">
+<section id="dashboard" class="page">
+<h2>CFO / CBD Dashboard</h2><div class="muted">Source model + live operational data</div>
+<div class="kpis" style="margin-top:16px">
+<div class="kpi"><div class="muted">CBD Revenue</div><div class="v" id="kRevenue">₹0</div></div>
+<div class="kpi"><div class="muted">CBD Cost</div><div class="v" id="kCost">₹0</div></div>
+<div class="kpi"><div class="muted">CBD Profit</div><div class="v" id="kProfit">₹0</div></div>
+<div class="kpi"><div class="muted">CBD Margin</div><div class="v" id="kMargin">0%</div></div>
+<div class="kpi"><div class="muted">Articles</div><div class="v" id="kArticles">0</div></div>
+</div>
+<div class="grid2"><div class="panel"><h3>Revenue by Customer</h3><div class="chartbox"><canvas id="custChart"></canvas></div></div>
+<div class="panel"><h3>Actual vs CBD</h3><div id="varianceBox"></div><div class="chartbox"><canvas id="varChart"></canvas></div></div></div>
+</section>
+
+<section id="articles" class="page hidden"><h2>CBD Articles</h2><div class="toolbar"><button class="btn primary" onclick="openArticleForm()">+ Add Article</button><input id="articleSearch" placeholder="Search article..." oninput="renderArticles()"></div><div id="articleForm" class="panel hidden"></div><div class="tablewrap"><table><thead><tr><th>Article</th><th>Name</th><th>Customer</th><th>Forecast</th><th>Total Cost</th><th>Price</th><th>Profit</th><th>Margin</th></tr></thead><tbody id="articleBody"></tbody></table></div></section>
+
+<section id="orders" class="page hidden"><h2>Orders</h2><div class="panel"><div class="toolbar"><select id="oCustomer"></select><input id="oArticle" placeholder="Article ID"><input id="oQty" type="number" placeholder="Quantity"><input id="oDate" type="date"><button class="btn primary" onclick="saveOrder()">Create Order</button></div></div><div class="tablewrap"><table><thead><tr><th>Order</th><th>Date</th><th>Customer</th><th>Article</th><th>Qty</th><th>Status</th></tr></thead><tbody id="orderBody"></tbody></table></div></section>
+
+<section id="dispatch" class="page hidden"><h2>Dispatch</h2><div class="panel"><div class="toolbar"><input id="dOrder" placeholder="Order ID"><input id="dArticle" placeholder="Article ID"><input id="dCustomer" placeholder="Customer ID"><input id="dQty" type="number" placeholder="Dispatch Qty"><input id="dDate" type="date"><button class="btn primary" onclick="saveDispatch()">Dispatch</button></div></div><p class="muted">Dispatch is allowed even when FG stock is zero. FG stock is a tracking/calculation layer.</p></section>
+
+<section id="actuals" class="page hidden"><h2>Actual Financials</h2><div class="panel"><div class="toolbar"><input id="aDate" type="date"><input id="aArticle" placeholder="Article ID"><input id="aCustomer" placeholder="Customer ID"><input id="aQty" type="number" placeholder="Qty"><input id="aRevenue" type="number" placeholder="Revenue ₹"><input id="aMaterial" type="number" placeholder="Material ₹"><input id="aConversion" type="number" placeholder="Conversion ₹"><input id="aPackaging" type="number" placeholder="Packaging ₹"><input id="aOther" type="number" placeholder="Other ₹"><button class="btn primary" onclick="saveActual()">Save Actual</button></div></div></section>
+
+<section id="reports" class="page hidden"><h2>Reports</h2><div class="grid2"><div class="panel"><h3>Core Logic</h3><p>Production Cost = Corrugation + Conversion + Packaging.</p><p>Profit = Price − Total Cost.</p><p>Margin = Profit ÷ Price × 100.</p></div><div class="panel"><h3>Data Flow</h3><p>Customer → Article → CBD Cost → Order → Production → Dispatch → Actual → Variance.</p></div></div></section>
+</main></div></div>
+
+<script>
+let USER=null,DATA=null,custChart=null,varChart=null;
+const $=id=>document.getElementById(id);
+function money(v){return '₹'+Number(v||0).toLocaleString('en-IN',{maximumFractionDigits:0})}
+function doLogin(){google.script.run.withSuccessHandler(r=>{USER=r.user;$('login').style.display='none';$('app').style.display='block';$('welcome').textContent='Signed in as '+USER.name;loadAll()}).withFailureHandler(e=>$('loginMsg').textContent=e.message).login($('email').value,$('password').value)}
+function logout(){location.reload()}
+function loadAll(){google.script.run.withSuccessHandler(d=>{DATA=d;renderArticles();renderOrders();loadDashboard()}).withFailureHandler(e=>alert(e.message)).getInitialData()}
+function loadDashboard(){google.script.run.withSuccessHandler(d=>{const k=d.kpi;$('kRevenue').textContent=money(k.cbdRevenue);$('kCost').textContent=money(k.cbdCost);$('kProfit').textContent=money(k.cbdProfit);$('kMargin').textContent=k.cbdMargin.toFixed(1)+'%';$('kArticles').textContent=k.articles;$('varianceBox').innerHTML='<p>Revenue variance: <b>'+money(d.variance.revenue)+'</b></p><p>Cost variance: <b>'+money(d.variance.cost)+'</b></p><p>Profit variance: <b>'+money(d.variance.profit)+'</b></p>';drawCharts(d)}).getDashboardData()}
+function drawCharts(d){if(custChart)custChart.destroy();custChart=new Chart($('custChart'),{type:'bar',data:{labels:d.customerRevenue.map(x=>x.customer),datasets:[{label:'Revenue',data:d.customerRevenue.map(x=>x.revenue)}]},options:{responsive:true,maintainAspectRatio:false}});if(varChart)varChart.destroy();varChart=new Chart($('varChart'),{type:'bar',data:{labels:['Revenue','Cost','Profit'],datasets:[{label:'Variance',data:[d.variance.revenue,d.variance.cost,d.variance.profit]}]},options:{responsive:true,maintainAspectRatio:false}})}
+function showPage(id,el){document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.nav').forEach(x=>x.classList.remove('active'));el.classList.add('active');if(id==='dashboard')loadDashboard()}
+function renderArticles(){const q=($('articleSearch')?.value||'').toLowerCase();$('articleBody').innerHTML=(DATA?.articles||[]).filter(r=>JSON.stringify(r).toLowerCase().includes(q)).map(r=>`<tr><td>${r.ArticleNo||''}</td><td>${r.ArticleName||''}</td><td>${r.CustomerID||''}</td><td>${Number(r.ForecastQty||0).toLocaleString()}</td><td>${money(r.CBDTotalCost)}</td><td>${money(r.CBDPrice)}</td><td>${money(r.CBDProfit)}</td><td>${Number(r.CBDMargin||0).toFixed(1)}%</td></tr>`).join('')}
+function renderOrders(){$('orderBody').innerHTML=(DATA?.orders||[]).slice().reverse().map(r=>`<tr><td>${r.OrderID}</td><td>${fmt(r.OrderDate)}</td><td>${r.CustomerID}</td><td>${r.ArticleID}</td><td>${r.Qty}</td><td>${r.Status}</td></tr>`).join('');$('oCustomer').innerHTML=(DATA?.customers||[]).map(c=>`<option value="${c.CustomerID}">${c.CustomerName}</option>`).join('')}
+function fmt(v){return v?new Date(v).toLocaleDateString('en-IN'):''}
+function openArticleForm(){alert('Article master should first be imported from your CBD workbook. After import, this form can be enabled for controlled editing.')}
+function saveOrder(){const d={CustomerID:$('oCustomer').value,ArticleID:$('oArticle').value,Qty:$('oQty').value,OrderDate:$('oDate').value};google.script.run.withSuccessHandler(()=>{alert('Order created');loadAll()}).withFailureHandler(e=>alert(e.message)).saveOrder(d,USER)}
+function saveDispatch(){const d={OrderID:$('dOrder').value,ArticleID:$('dArticle').value,CustomerID:$('dCustomer').value,Qty:$('dQty').value,DispatchDate:$('dDate').value};google.script.run.withSuccessHandler(()=>{alert('Dispatch saved');loadAll()}).withFailureHandler(e=>alert(e.message)).saveDispatch(d,USER)}
+function saveActual(){const d={Date:$('aDate').value,ArticleID:$('aArticle').value,CustomerID:$('aCustomer').value,Qty:$('aQty').value,ActualRevenue:$('aRevenue').value,ActualMaterial:$('aMaterial').value,ActualConversion:$('aConversion').value,ActualPackaging:$('aPackaging').value,ActualOther:$('aOther').value};google.script.run.withSuccessHandler(()=>{alert('Actual saved');loadAll()}).withFailureHandler(e=>alert(e.message)).saveActual(d,USER)}
+</script>
+</body></html>
