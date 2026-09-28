@@ -1,32 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-  <base target="_top">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>CBD Costing System</title>
 
   <style>
+
     * {
       box-sizing: border-box;
     }
 
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f7fa;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f6f8;
       color: #1f2937;
     }
+
+    /* HEADER */
 
     .header {
       background: #1f2937;
       color: white;
-      padding: 20px;
+      padding: 22px 25px;
     }
 
     .header h1 {
       margin: 0;
-      font-size: 24px;
+      font-size: 25px;
     }
 
     .header p {
@@ -35,63 +39,64 @@
       font-size: 14px;
     }
 
+    /* CONTAINER */
+
     .container {
       max-width: 1200px;
       margin: 30px auto;
       padding: 0 20px;
     }
 
+    /* SEARCH */
+
     .search-box {
       background: white;
       padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
       display: flex;
       gap: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
     }
 
-    input {
+    .search-box input {
       flex: 1;
-      padding: 13px;
+      padding: 13px 15px;
       border: 1px solid #d1d5db;
       border-radius: 8px;
       font-size: 15px;
       outline: none;
     }
 
-    input:focus {
+    .search-box input:focus {
       border-color: #2563eb;
     }
 
-    button {
+    .search-box button {
       border: none;
       background: #2563eb;
       color: white;
-      padding: 13px 25px;
+      padding: 13px 28px;
       border-radius: 8px;
       font-size: 15px;
       cursor: pointer;
     }
 
-    button:hover {
+    .search-box button:hover {
       background: #1d4ed8;
     }
 
-    button:disabled {
+    .search-box button:disabled {
       background: #9ca3af;
       cursor: not-allowed;
     }
 
+    /* MESSAGES */
+
     .message {
       margin-top: 15px;
-      padding: 12px;
+      padding: 12px 15px;
       border-radius: 8px;
       display: none;
-    }
-
-    .error {
-      background: #fee2e2;
-      color: #991b1b;
     }
 
     .loading {
@@ -99,15 +104,22 @@
       color: #075985;
     }
 
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    /* RESULTS */
+
     .results {
-      margin-top: 25px;
       display: none;
+      margin-top: 20px;
     }
 
     .section {
       background: white;
-      border-radius: 12px;
       padding: 20px;
+      border-radius: 12px;
       margin-bottom: 20px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.06);
     }
@@ -120,22 +132,25 @@
       border-bottom: 1px solid #e5e7eb;
     }
 
+    /* FIELDS */
+
     .grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
+      gap: 12px;
     }
 
     .field {
       background: #f9fafb;
-      padding: 12px;
+      padding: 13px;
       border-radius: 8px;
+      min-height: 65px;
     }
 
     .label {
       font-size: 12px;
       color: #6b7280;
-      margin-bottom: 5px;
+      margin-bottom: 6px;
     }
 
     .value {
@@ -144,6 +159,8 @@
       word-break: break-word;
     }
 
+    /* PROCESS */
+
     .process-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -151,10 +168,11 @@
     }
 
     .process {
-      padding: 14px;
+      padding: 15px;
       border-radius: 8px;
-      font-weight: 600;
       text-align: center;
+      font-weight: bold;
+      font-size: 14px;
     }
 
     .yes {
@@ -167,7 +185,10 @@
       color: #6b7280;
     }
 
+    /* MOBILE */
+
     @media (max-width: 800px) {
+
       .grid {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -175,13 +196,24 @@
       .process-grid {
         grid-template-columns: repeat(2, 1fr);
       }
+
     }
 
-    @media (max-width: 500px) {
+    @media (max-width: 550px) {
+
+      .container {
+        margin: 15px auto;
+        padding: 0 12px;
+      }
+
       .search-box {
         flex-direction: column;
       }
 
+      .search-box button {
+        width: 100%;
+      }
+
       .grid {
         grid-template-columns: 1fr;
       }
@@ -189,494 +221,1226 @@
       .process-grid {
         grid-template-columns: 1fr;
       }
+
+      .header {
+        padding: 18px;
+      }
+
+      .header h1 {
+        font-size: 21px;
+      }
+
     }
+
   </style>
+
 </head>
+
 
 <body>
 
-  <div class="header">
-    <h1>CBD Costing System</h1>
-    <p>Article lookup & process routing</p>
-  </div>
 
-  <div class="container">
+<!-- HEADER -->
 
-    <div class="search-box">
-      <input
-        type="text"
-        id="uidInput"
-        placeholder="Enter UID / Article ID"
-        autocomplete="off"
-        onkeydown="handleEnter(event)"
-      >
+<div class="header">
 
-      <button id="searchBtn" onclick="search()">
-        Search
-      </button>
-    </div>
+  <h1>CBD Costing System</h1>
 
-    <div id="loading" class="message loading">
-      Searching...
-    </div>
+  <p>Article Lookup & Process Routing</p>
 
-    <div id="error" class="message error"></div>
-
-    <div id="results" class="results">
-
-      <!-- ARTICLE INFORMATION -->
-      <div class="section">
-
-        <div class="section-title">
-          Article Information
-        </div>
-
-        <div class="grid">
-
-          <div class="field">
-            <div class="label">Article ID</div>
-            <div class="value" id="articleId">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Article Name</div>
-            <div class="value" id="articleName">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Article Group</div>
-            <div class="value" id="articleGroup">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Customer / Supplier</div>
-            <div class="value" id="customer">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Creation Date</div>
-            <div class="value" id="creationDate">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Changed Date</div>
-            <div class="value" id="changedDate">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Forecast Quantity</div>
-            <div class="value" id="forecastQuantity">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Average Order Quantity</div>
-            <div class="value" id="averageOrderQuantity">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Board Selection</div>
-            <div class="value" id="boardSelection">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Construction</div>
-            <div class="value" id="construction">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Net Size m²</div>
-            <div class="value" id="netSize">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Weight g</div>
-            <div class="value" id="weight">-</div>
-          </div>
-
-        </div>
-      </div>
+</div>
 
 
-      <!-- COST INFORMATION -->
-      <div class="section">
-
-        <div class="section-title">
-          Existing Cost Information
-        </div>
-
-        <div class="grid">
-
-          <div class="field">
-            <div class="label">Material Cost / 1000 pcs</div>
-            <div class="value" id="materialCost">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Corrugation Cost / 1000 pcs</div>
-            <div class="value" id="corrugationCost">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Conversion Cost / 1000 pcs</div>
-            <div class="value" id="conversionCost">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Packaging Cost / 1000 pcs</div>
-            <div class="value" id="packagingCost">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Production Cost / 1000 pcs</div>
-            <div class="value" id="productionCost">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Other Cost / 1000 pcs</div>
-            <div class="value" id="otherCost">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Profit / 1000 pcs</div>
-            <div class="value" id="profit">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Price Excl. Commission</div>
-            <div class="value" id="priceExclCommission">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">IKEA Commission</div>
-            <div class="value" id="commission">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Price Incl. Commission</div>
-            <div class="value" id="priceInclCommission">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Pallet Cost</div>
-            <div class="value" id="palletCost">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Transport Cost</div>
-            <div class="value" id="transportCost">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">DDP</div>
-            <div class="value" id="ddu">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Tool Cost</div>
-            <div class="value" id="toolCost">-</div>
-          </div>
-
-          <div class="field">
-            <div class="label">Extra Cost</div>
-            <div class="value" id="extraCost">-</div>
-          </div>
-
-        </div>
-      </div>
+<div class="container">
 
 
-      <!-- PROCESS ROUTING -->
-      <div class="section">
+  <!-- SEARCH -->
 
-        <div class="section-title">
-          Process Routing
-        </div>
+  <div class="search-box">
 
-        <div id="processGrid" class="process-grid"></div>
+    <input
+      id="uidInput"
+      type="text"
+      placeholder="Enter UID / Article ID"
+      autocomplete="off"
+    >
 
-      </div>
-
-    </div>
+    <button
+      id="searchBtn"
+      onclick="searchUID()"
+    >
+      Search
+    </button>
 
   </div>
+
+
+  <!-- LOADING -->
+
+  <div
+    id="loading"
+    class="message loading"
+  >
+    Searching...
+  </div>
+
+
+  <!-- ERROR -->
+
+  <div
+    id="error"
+    class="message error"
+  ></div>
+
+
+  <!-- RESULTS -->
+
+  <div
+    id="results"
+    class="results"
+  >
+
+
+    <!-- ARTICLE INFORMATION -->
+
+    <div class="section">
+
+      <div class="section-title">
+        Article Information
+      </div>
+
+
+      <div class="grid">
+
+
+        <div class="field">
+
+          <div class="label">
+            Article ID
+          </div>
+
+          <div
+            class="value"
+            id="articleId"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Article Name
+          </div>
+
+          <div
+            class="value"
+            id="articleName"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Article Group
+          </div>
+
+          <div
+            class="value"
+            id="articleGroup"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Customer / Supplier
+          </div>
+
+          <div
+            class="value"
+            id="customer"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Creation Date
+          </div>
+
+          <div
+            class="value"
+            id="creationDate"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Changed Date
+          </div>
+
+          <div
+            class="value"
+            id="changedDate"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Forecast Quantity
+          </div>
+
+          <div
+            class="value"
+            id="forecastQuantity"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Average Order Quantity
+          </div>
+
+          <div
+            class="value"
+            id="averageOrderQuantity"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Board Selection
+          </div>
+
+          <div
+            class="value"
+            id="boardSelection"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Construction
+          </div>
+
+          <div
+            class="value"
+            id="construction"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Net Size m²
+          </div>
+
+          <div
+            class="value"
+            id="netSize"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Weight g
+          </div>
+
+          <div
+            class="value"
+            id="weight"
+          >
+            -
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+
+    <!-- EXISTING COST -->
+
+    <div class="section">
+
+      <div class="section-title">
+        Existing Cost Information
+      </div>
+
+
+      <div class="grid">
+
+
+        <div class="field">
+
+          <div class="label">
+            Material Cost / 1000 pcs
+          </div>
+
+          <div
+            class="value"
+            id="materialCost"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Corrugation Cost / 1000 pcs
+          </div>
+
+          <div
+            class="value"
+            id="corrugationCost"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Conversion Cost / 1000 pcs
+          </div>
+
+          <div
+            class="value"
+            id="conversionCost"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Packaging Cost / 1000 pcs
+          </div>
+
+          <div
+            class="value"
+            id="packagingCost"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Production Cost / 1000 pcs
+          </div>
+
+          <div
+            class="value"
+            id="productionCost"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Other Cost / 1000 pcs
+          </div>
+
+          <div
+            class="value"
+            id="otherCost"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Profit / 1000 pcs
+          </div>
+
+          <div
+            class="value"
+            id="profit"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Price Excl. Commission
+          </div>
+
+          <div
+            class="value"
+            id="priceExclCommission"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            IKEA Commission
+          </div>
+
+          <div
+            class="value"
+            id="commission"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Price Incl. Commission
+          </div>
+
+          <div
+            class="value"
+            id="priceInclCommission"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Pallet Cost
+          </div>
+
+          <div
+            class="value"
+            id="palletCost"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Transport Cost
+          </div>
+
+          <div
+            class="value"
+            id="transportCost"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            DDP
+          </div>
+
+          <div
+            class="value"
+            id="ddu"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Tool Cost
+          </div>
+
+          <div
+            class="value"
+            id="toolCost"
+          >
+            -
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <div class="label">
+            Extra Cost
+          </div>
+
+          <div
+            class="value"
+            id="extraCost"
+          >
+            -
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+
+    <!-- PROCESS ROUTING -->
+
+    <div class="section">
+
+      <div class="section-title">
+        Process Routing
+      </div>
+
+
+      <div
+        id="processGrid"
+        class="process-grid"
+      ></div>
+
+    </div>
+
+
+  </div>
+
+
+</div>
 
 
 <script>
 
-function handleEnter(event) {
-  if (event.key === "Enter") {
-    search();
-  }
-}
+
+/*
+==================================================
+GOOGLE APPS SCRIPT API
+==================================================
+*/
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycby8R0VO2N60Kbgd-krxXuVzp2AtoJ8ORKqk0-h6VxfFUqjRJuvLGfQX4l95Gow-GZXv3w/exec";
 
 
-function search() {
+/*
+==================================================
+ENTER KEY
+==================================================
+*/
 
-  const uid = document.getElementById("uidInput").value.trim();
+document
+  .getElementById("uidInput")
+  .addEventListener(
+    "keydown",
+    function(event) {
+
+      if (event.key === "Enter") {
+
+        searchUID();
+
+      }
+
+    }
+  );
+
+
+/*
+==================================================
+SEARCH UID
+==================================================
+*/
+
+function searchUID() {
+
+  const input =
+    document.getElementById("uidInput");
+
+  const uid =
+    input.value.trim();
+
 
   if (!uid) {
-    showError("Please enter a UID / Article ID.");
+
+    showError(
+      "Please enter a UID / Article ID."
+    );
+
     return;
+
   }
+
 
   hideError();
 
-  document.getElementById("results").style.display = "none";
-  document.getElementById("loading").style.display = "block";
-
-  const btn = document.getElementById("searchBtn");
-  btn.disabled = true;
-  btn.textContent = "Searching...";
+  document
+    .getElementById("results")
+    .style.display = "none";
 
 
-  google.script.run
-
-    .withSuccessHandler(function(result) {
-
-      document.getElementById("loading").style.display = "none";
-
-      btn.disabled = false;
-      btn.textContent = "Search";
+  document
+    .getElementById("loading")
+    .style.display = "block";
 
 
-      if (!result || !result.success) {
+  const button =
+    document.getElementById("searchBtn");
+
+
+  button.disabled = true;
+
+  button.textContent =
+    "Searching...";
+
+
+  /*
+  Create JSONP callback
+  */
+
+  const callbackName =
+    "cbdCallback_" +
+    Date.now();
+
+
+  /*
+  Callback function
+  */
+
+  window[callbackName] =
+    function(response) {
+
+
+      document
+        .getElementById("loading")
+        .style.display = "none";
+
+
+      button.disabled = false;
+
+      button.textContent =
+        "Search";
+
+
+      /*
+      Article result
+      */
+
+      if (
+        !response ||
+        !response.article ||
+        !response.article.success
+      ) {
 
         showError(
-          result && result.message
-            ? result.message
-            : "Article not found."
+          response &&
+          response.article &&
+          response.article.message
+
+            ? response.article.message
+
+            : "UID not found."
+        );
+
+
+        cleanup(
+          callbackName
         );
 
         return;
+
       }
 
 
-      displayArticle(result.data);
+      /*
+      Display article
+      */
 
-
-      google.script.run
-
-        .withSuccessHandler(function(route) {
-
-          displayRouting(route);
-
-        })
-
-        .withFailureHandler(function(error) {
-
-          console.error(error);
-
-          displayRouting(null);
-
-        })
-
-        .getRouting(uid);
-
-    })
-
-
-    .withFailureHandler(function(error) {
-
-      document.getElementById("loading").style.display = "none";
-
-      btn.disabled = false;
-      btn.textContent = "Search";
-
-      showError(
-        error && error.message
-          ? error.message
-          : "Something went wrong."
+      displayArticle(
+        response.article.data
       );
 
-    })
 
-    .searchUID(uid);
+      /*
+      Display routing
+      */
+
+      displayRouting(
+        response.routing
+      );
+
+
+      cleanup(
+        callbackName
+      );
+
+    };
+
+
+  /*
+  Create script request
+  */
+
+  const script =
+    document.createElement("script");
+
+
+  script.id =
+    callbackName;
+
+
+  script.src =
+    API_URL +
+    "?uid=" +
+    encodeURIComponent(uid) +
+    "&callback=" +
+    callbackName;
+
+
+  /*
+  Connection error
+  */
+
+  script.onerror =
+    function() {
+
+
+      document
+        .getElementById("loading")
+        .style.display = "none";
+
+
+      button.disabled = false;
+
+      button.textContent =
+        "Search";
+
+
+      showError(
+        "Could not connect to the Google Sheets server."
+      );
+
+
+      cleanup(
+        callbackName
+      );
+
+    };
+
+
+  document
+    .body
+    .appendChild(script);
+
 }
 
+
+/*
+==================================================
+DISPLAY ARTICLE
+==================================================
+*/
 
 function displayArticle(data) {
 
-  document.getElementById("articleId").textContent =
-    value(data.articleId);
 
-  document.getElementById("articleName").textContent =
-    value(data.articleName);
-
-  document.getElementById("articleGroup").textContent =
-    value(data.articleGroup);
-
-  document.getElementById("customer").textContent =
-    value(data.customer);
-
-  document.getElementById("creationDate").textContent =
-    value(data.creationDate);
-
-  document.getElementById("changedDate").textContent =
-    value(data.changedDate);
-
-  document.getElementById("forecastQuantity").textContent =
-    value(data.forecastQuantity);
-
-  document.getElementById("averageOrderQuantity").textContent =
-    value(data.averageOrderQuantity);
-
-  document.getElementById("boardSelection").textContent =
-    value(data.boardSelection);
-
-  document.getElementById("construction").textContent =
-    value(data.construction);
-
-  document.getElementById("netSize").textContent =
-    value(data.netSize);
-
-  document.getElementById("weight").textContent =
-    value(data.weight);
+  setValue(
+    "articleId",
+    data.articleId
+  );
 
 
-  document.getElementById("materialCost").textContent =
-    value(data.materialCost);
-
-  document.getElementById("corrugationCost").textContent =
-    value(data.corrugationCost);
-
-  document.getElementById("conversionCost").textContent =
-    value(data.conversionCost);
-
-  document.getElementById("packagingCost").textContent =
-    value(data.packagingCost);
-
-  document.getElementById("productionCost").textContent =
-    value(data.productionCost);
-
-  document.getElementById("otherCost").textContent =
-    value(data.otherCost);
-
-  document.getElementById("profit").textContent =
-    value(data.profit);
-
-  document.getElementById("priceExclCommission").textContent =
-    value(data.priceExclCommission);
-
-  document.getElementById("commission").textContent =
-    value(data.commission);
-
-  document.getElementById("priceInclCommission").textContent =
-    value(data.priceInclCommission);
-
-  document.getElementById("palletCost").textContent =
-    value(data.palletCost);
-
-  document.getElementById("transportCost").textContent =
-    value(data.transportCost);
-
-  document.getElementById("ddu").textContent =
-    value(data.ddu);
-
-  document.getElementById("toolCost").textContent =
-    value(data.toolCost);
-
-  document.getElementById("extraCost").textContent =
-    value(data.extraCost);
+  setValue(
+    "articleName",
+    data.articleName
+  );
 
 
-  document.getElementById("results").style.display = "block";
+  setValue(
+    "articleGroup",
+    data.articleGroup
+  );
+
+
+  setValue(
+    "customer",
+    data.customer
+  );
+
+
+  setValue(
+    "creationDate",
+    data.creationDate
+  );
+
+
+  setValue(
+    "changedDate",
+    data.changedDate
+  );
+
+
+  setValue(
+    "forecastQuantity",
+    data.forecastQuantity
+  );
+
+
+  setValue(
+    "averageOrderQuantity",
+    data.averageOrderQuantity
+  );
+
+
+  setValue(
+    "boardSelection",
+    data.boardSelection
+  );
+
+
+  setValue(
+    "construction",
+    data.construction
+  );
+
+
+  setValue(
+    "netSize",
+    data.netSize
+  );
+
+
+  setValue(
+    "weight",
+    data.weight
+  );
+
+
+  setValue(
+    "materialCost",
+    data.materialCost
+  );
+
+
+  setValue(
+    "corrugationCost",
+    data.corrugationCost
+  );
+
+
+  setValue(
+    "conversionCost",
+    data.conversionCost
+  );
+
+
+  setValue(
+    "packagingCost",
+    data.packagingCost
+  );
+
+
+  setValue(
+    "productionCost",
+    data.productionCost
+  );
+
+
+  setValue(
+    "otherCost",
+    data.otherCost
+  );
+
+
+  setValue(
+    "profit",
+    data.profit
+  );
+
+
+  setValue(
+    "priceExclCommission",
+    data.priceExclCommission
+  );
+
+
+  setValue(
+    "commission",
+    data.commission
+  );
+
+
+  setValue(
+    "priceInclCommission",
+    data.priceInclCommission
+  );
+
+
+  setValue(
+    "palletCost",
+    data.palletCost
+  );
+
+
+  setValue(
+    "transportCost",
+    data.transportCost
+  );
+
+
+  setValue(
+    "ddu",
+    data.ddu
+  );
+
+
+  setValue(
+    "toolCost",
+    data.toolCost
+  );
+
+
+  setValue(
+    "extraCost",
+    data.extraCost
+  );
+
+
+  document
+    .getElementById("results")
+    .style.display = "block";
+
 }
 
 
+/*
+==================================================
+DISPLAY ROUTING
+==================================================
+*/
+
 function displayRouting(route) {
 
-  const grid = document.getElementById("processGrid");
+
+  const grid =
+    document.getElementById(
+      "processGrid"
+    );
+
 
   grid.innerHTML = "";
 
 
-  if (!route || !route.success) {
+  if (
+    !route ||
+    !route.success ||
+    !route.data
+  ) {
 
     grid.innerHTML =
-      '<div class="process no">No routing information available</div>';
+      '<div class="process no">' +
+      'No routing information available' +
+      '</div>';
 
     return;
+
   }
 
 
-  const routing = route.data || {};
-
-  const excluded = ["UID", "Article ID"];
-
-  let found = false;
+  const routing =
+    route.data;
 
 
-  Object.keys(routing).forEach(function(key) {
-
-    if (excluded.includes(key)) return;
-
-    found = true;
-
-    const rawValue = routing[key];
-
-    const isYes =
-      String(rawValue)
-        .trim()
-        .toUpperCase() === "YES";
+  let count =
+    0;
 
 
-    const div = document.createElement("div");
-
-    div.className =
-      "process " + (isYes ? "yes" : "no");
-
-
-    div.textContent =
-      (isYes ? "✓ " : "✗ ") +
-      key;
+  Object.keys(routing)
+    .forEach(
+      function(key) {
 
 
-    grid.appendChild(div);
+        /*
+        Do not show UID itself
+        */
 
-  });
+        if (
+          key === "UID" ||
+          key === "Article ID" ||
+          key === "Unique Identifier"
+        ) {
+
+          return;
+
+        }
 
 
-  if (!found) {
+        count++;
+
+
+        const rawValue =
+          routing[key];
+
+
+        const value =
+          String(
+            rawValue || ""
+          )
+          .trim()
+          .toUpperCase();
+
+
+        const isYes =
+          value === "YES";
+
+
+        const div =
+          document.createElement(
+            "div"
+          );
+
+
+        div.className =
+          "process " +
+          (
+            isYes
+              ? "yes"
+              : "no"
+          );
+
+
+        div.textContent =
+          (
+            isYes
+              ? "✓ "
+              : "✗ "
+          ) +
+          key;
+
+
+        grid.appendChild(
+          div
+        );
+
+      }
+    );
+
+
+  if (count === 0) {
 
     grid.innerHTML =
-      '<div class="process no">No process routing available</div>';
+      '<div class="process no">' +
+      'No process routing available' +
+      '</div>';
 
   }
+
 }
 
 
-function value(v) {
+/*
+==================================================
+SET VALUE
+==================================================
+*/
+
+function setValue(
+  id,
+  value
+) {
+
+
+  const element =
+    document.getElementById(id);
+
+
+  if (!element) {
+
+    return;
+
+  }
+
 
   if (
-    v === null ||
-    v === undefined ||
-    v === ""
+    value === null ||
+    value === undefined ||
+    value === ""
   ) {
-    return "-";
+
+    element.textContent =
+      "-";
+
+  } else {
+
+    element.textContent =
+      value;
+
   }
 
-  return v;
+}
+
+
+/*
+==================================================
+ERROR
+==================================================
+*/
+
+function showError(
+  message
+) {
+
+
+  const error =
+    document.getElementById(
+      "error"
+    );
+
+
+  error.textContent =
+    message;
+
+
+  error.style.display =
+    "block";
 
 }
 
 
-function showError(message) {
-
-  const el = document.getElementById("error");
-
-  el.textContent = message;
-
-  el.style.display = "block";
-}
-
+/*
+==================================================
+HIDE ERROR
+==================================================
+*/
 
 function hideError() {
 
-  document.getElementById("error").style.display = "none";
+  document
+    .getElementById("error")
+    .style.display =
+    "none";
+
+}
+
+
+/*
+==================================================
+CLEANUP JSONP
+==================================================
+*/
+
+function cleanup(
+  callbackName
+) {
+
+
+  try {
+
+    delete window[
+      callbackName
+    ];
+
+  } catch (e) {
+
+  }
+
+
+  const script =
+    document.getElementById(
+      callbackName
+    );
+
+
+  if (script) {
+
+    script.remove();
+
+  }
 
 }
 
 </script>
 
+
 </body>
+
 </html>
