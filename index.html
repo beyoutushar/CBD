@@ -1,22 +1,12 @@
 <!DOCTYPE html>
 <html>
-
 <head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>CFO Automation System</title>
-
-  <!-- Excel reader -->
-  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <title>CBD Costing System</title>
 
   <style>
-
     * {
       box-sizing: border-box;
     }
@@ -24,14 +14,14 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f4f6f8;
+      background: #f5f7fa;
       color: #1f2937;
     }
 
     .header {
-      background: #111827;
+      background: #1f2937;
       color: white;
-      padding: 22px 30px;
+      padding: 20px;
     }
 
     .header h1 {
@@ -41,51 +31,50 @@
 
     .header p {
       margin: 6px 0 0;
-      color: #cbd5e1;
+      color: #d1d5db;
+      font-size: 14px;
     }
 
     .container {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 30px auto;
       padding: 0 20px;
     }
 
-    .card {
+    .search-box {
       background: white;
+      padding: 20px;
       border-radius: 12px;
-      padding: 25px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,.06);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      display: flex;
+      gap: 10px;
     }
 
-    .card h2 {
-      margin-top: 0;
+    input {
+      flex: 1;
+      padding: 13px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
     }
 
-    .upload-box {
-      border: 2px dashed #cbd5e1;
-      border-radius: 12px;
-      padding: 40px 20px;
-      text-align: center;
-      background: #f8fafc;
-    }
-
-    input[type="file"] {
-      margin: 20px 0;
+    input:focus {
+      border-color: #2563eb;
     }
 
     button {
-      background: #111827;
-      color: white;
       border: none;
-      padding: 12px 22px;
+      background: #2563eb;
+      color: white;
+      padding: 13px 25px;
       border-radius: 8px;
-      cursor: pointer;
       font-size: 15px;
+      cursor: pointer;
     }
 
     button:hover {
-      background: #374151;
+      background: #1d4ed8;
     }
 
     button:disabled {
@@ -93,16 +82,11 @@
       cursor: not-allowed;
     }
 
-    .status {
-      margin-top: 20px;
-      padding: 15px;
+    .message {
+      margin-top: 15px;
+      padding: 12px;
       border-radius: 8px;
       display: none;
-    }
-
-    .success {
-      background: #dcfce7;
-      color: #166534;
     }
 
     .error {
@@ -110,696 +94,589 @@
       color: #991b1b;
     }
 
-    .info {
-      background: #dbeafe;
-      color: #1e40af;
+    .loading {
+      background: #e0f2fe;
+      color: #075985;
     }
 
-    .stats {
+    .results {
+      margin-top: 25px;
+      display: none;
+    }
+
+    .section {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 15px;
     }
 
-    .stat {
-      background: #f8fafc;
-      border-radius: 10px;
-      padding: 18px;
+    .field {
+      background: #f9fafb;
+      padding: 12px;
+      border-radius: 8px;
     }
 
-    .stat-title {
-      color: #64748b;
-      font-size: 13px;
+    .label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 5px;
     }
 
-    .stat-value {
-      font-size: 24px;
-      font-weight: bold;
-      margin-top: 6px;
+    .value {
+      font-size: 14px;
+      font-weight: 600;
+      word-break: break-word;
     }
 
-    @media(max-width:700px) {
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
 
-      .stats {
-        grid-template-columns: 1fr 1fr;
+    .process {
+      padding: 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .yes {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .no {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+
+    @media (max-width: 800px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
       }
 
+      .process-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
+    @media (max-width: 500px) {
+      .search-box {
+        flex-direction: column;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .process-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
-
 </head>
-
 
 <body>
 
-
   <div class="header">
-
-    <h1>📊 CFO Automation System</h1>
-
-    <p>CBD Master — Version 1</p>
-
+    <h1>CBD Costing System</h1>
+    <p>Article lookup & process routing</p>
   </div>
-
 
   <div class="container">
 
+    <div class="search-box">
+      <input
+        type="text"
+        id="uidInput"
+        placeholder="Enter UID / Article ID"
+        autocomplete="off"
+        onkeydown="handleEnter(event)"
+      >
 
-    <!-- Upload -->
+      <button id="searchBtn" onclick="search()">
+        Search
+      </button>
+    </div>
 
-    <div class="card">
+    <div id="loading" class="message loading">
+      Searching...
+    </div>
 
-      <h2>Upload CBD Excel</h2>
+    <div id="error" class="message error"></div>
 
-      <p>
-        Upload the original CBD Excel file.
-        The system will automatically read the
-        <b>Articles</b> sheet.
-      </p>
+    <div id="results" class="results">
 
+      <!-- ARTICLE INFORMATION -->
+      <div class="section">
 
-      <div class="upload-box">
-
-        <div>
-          📁 Select CBD Excel File
+        <div class="section-title">
+          Article Information
         </div>
 
-        <input
-          type="file"
-          id="fileInput"
-          accept=".xlsx,.xls"
-        >
+        <div class="grid">
 
-        <br>
+          <div class="field">
+            <div class="label">Article ID</div>
+            <div class="value" id="articleId">-</div>
+          </div>
 
-        <button
-          id="uploadBtn"
-          onclick="processCBD()"
-        >
-          Process CBD
-        </button>
+          <div class="field">
+            <div class="label">Article Name</div>
+            <div class="value" id="articleName">-</div>
+          </div>
 
+          <div class="field">
+            <div class="label">Article Group</div>
+            <div class="value" id="articleGroup">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Customer / Supplier</div>
+            <div class="value" id="customer">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Creation Date</div>
+            <div class="value" id="creationDate">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Changed Date</div>
+            <div class="value" id="changedDate">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Forecast Quantity</div>
+            <div class="value" id="forecastQuantity">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Average Order Quantity</div>
+            <div class="value" id="averageOrderQuantity">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Board Selection</div>
+            <div class="value" id="boardSelection">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Construction</div>
+            <div class="value" id="construction">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Net Size m²</div>
+            <div class="value" id="netSize">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Weight g</div>
+            <div class="value" id="weight">-</div>
+          </div>
+
+        </div>
       </div>
 
 
-      <div
-        id="status"
-        class="status"
-      ></div>
+      <!-- COST INFORMATION -->
+      <div class="section">
 
-    </div>
+        <div class="section-title">
+          Existing Cost Information
+        </div>
 
+        <div class="grid">
 
-    <!-- Summary -->
-
-    <div class="card">
-
-      <h2>CBD Summary</h2>
-
-      <div class="stats">
-
-        <div class="stat">
-
-          <div class="stat-title">
-            Articles
+          <div class="field">
+            <div class="label">Material Cost / 1000 pcs</div>
+            <div class="value" id="materialCost">-</div>
           </div>
 
-          <div
-            class="stat-value"
-            id="articles"
-          >
-            0
+          <div class="field">
+            <div class="label">Corrugation Cost / 1000 pcs</div>
+            <div class="value" id="corrugationCost">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Conversion Cost / 1000 pcs</div>
+            <div class="value" id="conversionCost">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Packaging Cost / 1000 pcs</div>
+            <div class="value" id="packagingCost">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Production Cost / 1000 pcs</div>
+            <div class="value" id="productionCost">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Other Cost / 1000 pcs</div>
+            <div class="value" id="otherCost">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Profit / 1000 pcs</div>
+            <div class="value" id="profit">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Price Excl. Commission</div>
+            <div class="value" id="priceExclCommission">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">IKEA Commission</div>
+            <div class="value" id="commission">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Price Incl. Commission</div>
+            <div class="value" id="priceInclCommission">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Pallet Cost</div>
+            <div class="value" id="palletCost">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Transport Cost</div>
+            <div class="value" id="transportCost">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">DDP</div>
+            <div class="value" id="ddu">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Tool Cost</div>
+            <div class="value" id="toolCost">-</div>
+          </div>
+
+          <div class="field">
+            <div class="label">Extra Cost</div>
+            <div class="value" id="extraCost">-</div>
           </div>
 
         </div>
+      </div>
 
 
-        <div class="stat">
+      <!-- PROCESS ROUTING -->
+      <div class="section">
 
-          <div class="stat-title">
-            Forecast Quantity
-          </div>
-
-          <div
-            class="stat-value"
-            id="forecastQty"
-          >
-            0
-          </div>
-
+        <div class="section-title">
+          Process Routing
         </div>
 
-
-        <div class="stat">
-
-          <div class="stat-title">
-            Revenue
-          </div>
-
-          <div
-            class="stat-value"
-            id="revenue"
-          >
-            ₹0
-          </div>
-
-        </div>
-
-
-        <div class="stat">
-
-          <div class="stat-title">
-            Profit
-          </div>
-
-          <div
-            class="stat-value"
-            id="profit"
-          >
-            ₹0
-          </div>
-
-        </div>
+        <div id="processGrid" class="process-grid"></div>
 
       </div>
 
     </div>
-
 
   </div>
 
 
 <script>
 
-
-/************************************************
- * COLUMN MAPPING
- *
- * Articles sheet:
- *
- * Row 2 = headers
- * Row 3 onwards = data
- ************************************************/
+function handleEnter(event) {
+  if (event.key === "Enter") {
+    search();
+  }
+}
 
 
-const REQUIRED_COLUMNS = {
+function search() {
 
-  articleId:
-    "Unique Identifier",
+  const uid = document.getElementById("uidInput").value.trim();
 
-  creationDate:
-    "Creation Date",
-
-  changedDate:
-    "Changed Date",
-
-  articleName:
-    "Article Name",
-
-  articleGroup:
-    "Article Group Name",
-
-  customerSupplier:
-    "IKEA Supplier Name",
-
-  forecastQty:
-    "Forecasted Yearly volume",
-
-  avgOrderQty:
-    "Average Order Quantity",
-
-  boardSelection:
-    "Board Selection",
-
-  construction:
-    "Construction (FEFCO / IKEA /Drawing)",
-
-  netSize:
-    "Article Net Size (m2)",
-
-  weightG:
-    "Weight (g)",
-
-  weightKg1000:
-    "Weight excl waste (Kg) / 1000pcs",
-
-  materialCost:
-    "Material cost inc waste INR/1000pcs",
-
-  corrugationCost:
-    "Corrugation cost INR/1000pcs",
-
-  conversionCost:
-    "Conversion cost with volume discount INR/1000pcs",
-
-  packagingCost:
-    "Packaging cost INR/1000pcs",
-
-  productionCost:
-    "Production cost INR/1000pcs",
-
-  otherCost:
-    "Other Cost INR/1000pcs",
-
-  priceExclCommission:
-    "Price excl commission",
-
-  commission:
-    "IKEA Commission",
-
-  priceInclCommission:
-    "Price incl commission INR/1000pcs",
-
-  palletCost:
-    "Pallet Cost",
-
-  transportCost:
-    "Transport Cost",
-
-  ddu:
-    "DDU",
-
-  toolCost:
-    "Tool Cost",
-
-  totalWeight:
-    "Total Weight",
-
-  profit:
-    "Profit INR/1000pcs",
-
-  extraCost:
-    "Extra Cost",
-
-  mssStatus:
-    "MSS Status",
-
-  ikeaQuality:
-    "IKEA Quality"
-
-};
-
-
-/**
- * Main upload process.
- */
-function processCBD() {
-
-  const input =
-    document.getElementById("fileInput");
-
-  const button =
-    document.getElementById("uploadBtn");
-
-  if (!input.files.length) {
-
-    showStatus(
-      "Please select the CBD Excel file first.",
-      "error"
-    );
-
+  if (!uid) {
+    showError("Please enter a UID / Article ID.");
     return;
   }
 
+  hideError();
 
-  const file = input.files[0];
+  document.getElementById("results").style.display = "none";
+  document.getElementById("loading").style.display = "block";
 
-
-  button.disabled = true;
-
-  showStatus(
-    "Reading Excel file...",
-    "info"
-  );
+  const btn = document.getElementById("searchBtn");
+  btn.disabled = true;
+  btn.textContent = "Searching...";
 
 
-  const reader = new FileReader();
+  google.script.run
+
+    .withSuccessHandler(function(result) {
+
+      document.getElementById("loading").style.display = "none";
+
+      btn.disabled = false;
+      btn.textContent = "Search";
 
 
-  reader.onload = function(e) {
+      if (!result || !result.success) {
 
-    try {
-
-      const workbook =
-        XLSX.read(
-          e.target.result,
-          {
-            type: "array",
-            cellDates: true
-          }
+        showError(
+          result && result.message
+            ? result.message
+            : "Article not found."
         );
 
-
-      /*
-       * Make sure Articles exists.
-       */
-
-      if (!workbook.SheetNames.includes("Articles")) {
-
-        throw new Error(
-          'The Excel file does not contain an "Articles" sheet.'
-        );
-
+        return;
       }
 
 
-      const worksheet =
-        workbook.Sheets["Articles"];
+      displayArticle(result.data);
 
-
-      /*
-       * Convert sheet to JSON.
-       *
-       * Row 2 contains headers.
-       */
-
-      const raw =
-        XLSX.utils.sheet_to_json(
-          worksheet,
-          {
-            range: 1,
-            defval: ""
-          }
-        );
-
-
-      if (!raw.length) {
-
-        throw new Error(
-          "No article data found in the Articles sheet."
-        );
-
-      }
-
-
-      /*
-       * Validate required columns.
-       */
-
-      const headers =
-        Object.keys(raw[0]);
-
-
-      const missing = [];
-
-
-      Object.keys(REQUIRED_COLUMNS)
-        .forEach(key => {
-
-          const column =
-            REQUIRED_COLUMNS[key];
-
-          if (!headers.includes(column)) {
-            missing.push(column);
-          }
-
-        });
-
-
-      if (missing.length) {
-
-        throw new Error(
-          "Missing columns: " +
-          missing.join(", ")
-        );
-
-      }
-
-
-      /*
-       * Convert to our clean structure.
-       */
-
-      const rows =
-        raw
-          .filter(row =>
-            String(
-              row[REQUIRED_COLUMNS.articleId] || ""
-            ).trim() !== ""
-          )
-          .map(row => {
-
-            return {
-
-              articleId:
-                row[REQUIRED_COLUMNS.articleId],
-
-              creationDate:
-                row[REQUIRED_COLUMNS.creationDate],
-
-              changedDate:
-                row[REQUIRED_COLUMNS.changedDate],
-
-              articleName:
-                row[REQUIRED_COLUMNS.articleName],
-
-              articleGroup:
-                row[REQUIRED_COLUMNS.articleGroup],
-
-              customerSupplier:
-                row[REQUIRED_COLUMNS.customerSupplier],
-
-              forecastQty:
-                row[REQUIRED_COLUMNS.forecastQty],
-
-              avgOrderQty:
-                row[REQUIRED_COLUMNS.avgOrderQty],
-
-              boardSelection:
-                row[REQUIRED_COLUMNS.boardSelection],
-
-              construction:
-                row[REQUIRED_COLUMNS.construction],
-
-              netSize:
-                row[REQUIRED_COLUMNS.netSize],
-
-              weightG:
-                row[REQUIRED_COLUMNS.weightG],
-
-              weightKg1000:
-                row[REQUIRED_COLUMNS.weightKg1000],
-
-              materialCost:
-                row[REQUIRED_COLUMNS.materialCost],
-
-              corrugationCost:
-                row[REQUIRED_COLUMNS.corrugationCost],
-
-              conversionCost:
-                row[REQUIRED_COLUMNS.conversionCost],
-
-              packagingCost:
-                row[REQUIRED_COLUMNS.packagingCost],
-
-              productionCost:
-                row[REQUIRED_COLUMNS.productionCost],
-
-              otherCost:
-                row[REQUIRED_COLUMNS.otherCost],
-
-              priceExclCommission:
-                row[REQUIRED_COLUMNS.priceExclCommission],
-
-              commission:
-                row[REQUIRED_COLUMNS.commission],
-
-              priceInclCommission:
-                row[REQUIRED_COLUMNS.priceInclCommission],
-
-              palletCost:
-                row[REQUIRED_COLUMNS.palletCost],
-
-              transportCost:
-                row[REQUIRED_COLUMNS.transportCost],
-
-              ddu:
-                row[REQUIRED_COLUMNS.ddu],
-
-              toolCost:
-                row[REQUIRED_COLUMNS.toolCost],
-
-              totalWeight:
-                row[REQUIRED_COLUMNS.totalWeight],
-
-              profit:
-                row[REQUIRED_COLUMNS.profit],
-
-              extraCost:
-                row[REQUIRED_COLUMNS.extraCost],
-
-              mssStatus:
-                row[REQUIRED_COLUMNS.mssStatus],
-
-              ikeaQuality:
-                row[REQUIRED_COLUMNS.ikeaQuality]
-
-            };
-
-          });
-
-
-      showStatus(
-        "Found " +
-        rows.length +
-        " articles. Saving to Google Sheets...",
-        "info"
-      );
-
-
-      /*
-       * Send to Apps Script.
-       */
 
       google.script.run
 
-        .withSuccessHandler(function(result) {
+        .withSuccessHandler(function(route) {
 
-          button.disabled = false;
-
-
-          showStatus(
-            "✅ Successfully imported " +
-            result.imported +
-            " articles into CBD_Master.",
-            "success"
-          );
-
-
-          loadSummary();
+          displayRouting(route);
 
         })
 
         .withFailureHandler(function(error) {
 
-          button.disabled = false;
+          console.error(error);
 
-          showStatus(
-            "❌ " +
-            error.message,
-            "error"
-          );
+          displayRouting(null);
 
         })
 
-        .saveCBDData({
-          rows: rows
-        });
-
-
-    }
-
-    catch(error) {
-
-      button.disabled = false;
-
-      showStatus(
-        "❌ " + error.message,
-        "error"
-      );
-
-    }
-
-  };
-
-
-  reader.readAsArrayBuffer(file);
-
-}
-
-
-/**
- * Load summary.
- */
-function loadSummary() {
-
-  google.script.run
-
-    .withSuccessHandler(function(data) {
-
-      document.getElementById("articles")
-        .textContent =
-        formatNumber(data.articles);
-
-
-      document.getElementById("forecastQty")
-        .textContent =
-        formatNumber(data.forecastQty);
-
-
-      document.getElementById("revenue")
-        .textContent =
-        formatMoney(data.totalRevenue);
-
-
-      document.getElementById("profit")
-        .textContent =
-        formatMoney(data.totalProfit);
+        .getRouting(uid);
 
     })
 
-    .getCBDSummary();
 
-}
+    .withFailureHandler(function(error) {
 
+      document.getElementById("loading").style.display = "none";
 
-/**
- * Status message.
- */
-function showStatus(message, type) {
+      btn.disabled = false;
+      btn.textContent = "Search";
 
-  const box =
-    document.getElementById("status");
-
-  box.style.display = "block";
-
-  box.className =
-    "status " + type;
-
-  box.textContent = message;
-
-}
-
-
-/**
- * Number formatting.
- */
-function formatNumber(value) {
-
-  return Number(value || 0)
-    .toLocaleString("en-IN");
-
-}
-
-
-/**
- * Money formatting.
- */
-function formatMoney(value) {
-
-  return "₹" +
-    Number(value || 0)
-      .toLocaleString(
-        "en-IN",
-        {
-          maximumFractionDigits: 0
-        }
+      showError(
+        error && error.message
+          ? error.message
+          : "Something went wrong."
       );
 
+    })
+
+    .searchUID(uid);
 }
 
 
-window.onload = function() {
+function displayArticle(data) {
 
-  loadSummary();
+  document.getElementById("articleId").textContent =
+    value(data.articleId);
 
-};
+  document.getElementById("articleName").textContent =
+    value(data.articleName);
 
+  document.getElementById("articleGroup").textContent =
+    value(data.articleGroup);
+
+  document.getElementById("customer").textContent =
+    value(data.customer);
+
+  document.getElementById("creationDate").textContent =
+    value(data.creationDate);
+
+  document.getElementById("changedDate").textContent =
+    value(data.changedDate);
+
+  document.getElementById("forecastQuantity").textContent =
+    value(data.forecastQuantity);
+
+  document.getElementById("averageOrderQuantity").textContent =
+    value(data.averageOrderQuantity);
+
+  document.getElementById("boardSelection").textContent =
+    value(data.boardSelection);
+
+  document.getElementById("construction").textContent =
+    value(data.construction);
+
+  document.getElementById("netSize").textContent =
+    value(data.netSize);
+
+  document.getElementById("weight").textContent =
+    value(data.weight);
+
+
+  document.getElementById("materialCost").textContent =
+    value(data.materialCost);
+
+  document.getElementById("corrugationCost").textContent =
+    value(data.corrugationCost);
+
+  document.getElementById("conversionCost").textContent =
+    value(data.conversionCost);
+
+  document.getElementById("packagingCost").textContent =
+    value(data.packagingCost);
+
+  document.getElementById("productionCost").textContent =
+    value(data.productionCost);
+
+  document.getElementById("otherCost").textContent =
+    value(data.otherCost);
+
+  document.getElementById("profit").textContent =
+    value(data.profit);
+
+  document.getElementById("priceExclCommission").textContent =
+    value(data.priceExclCommission);
+
+  document.getElementById("commission").textContent =
+    value(data.commission);
+
+  document.getElementById("priceInclCommission").textContent =
+    value(data.priceInclCommission);
+
+  document.getElementById("palletCost").textContent =
+    value(data.palletCost);
+
+  document.getElementById("transportCost").textContent =
+    value(data.transportCost);
+
+  document.getElementById("ddu").textContent =
+    value(data.ddu);
+
+  document.getElementById("toolCost").textContent =
+    value(data.toolCost);
+
+  document.getElementById("extraCost").textContent =
+    value(data.extraCost);
+
+
+  document.getElementById("results").style.display = "block";
+}
+
+
+function displayRouting(route) {
+
+  const grid = document.getElementById("processGrid");
+
+  grid.innerHTML = "";
+
+
+  if (!route || !route.success) {
+
+    grid.innerHTML =
+      '<div class="process no">No routing information available</div>';
+
+    return;
+  }
+
+
+  const routing = route.data || {};
+
+  const excluded = ["UID", "Article ID"];
+
+  let found = false;
+
+
+  Object.keys(routing).forEach(function(key) {
+
+    if (excluded.includes(key)) return;
+
+    found = true;
+
+    const rawValue = routing[key];
+
+    const isYes =
+      String(rawValue)
+        .trim()
+        .toUpperCase() === "YES";
+
+
+    const div = document.createElement("div");
+
+    div.className =
+      "process " + (isYes ? "yes" : "no");
+
+
+    div.textContent =
+      (isYes ? "✓ " : "✗ ") +
+      key;
+
+
+    grid.appendChild(div);
+
+  });
+
+
+  if (!found) {
+
+    grid.innerHTML =
+      '<div class="process no">No process routing available</div>';
+
+  }
+}
+
+
+function value(v) {
+
+  if (
+    v === null ||
+    v === undefined ||
+    v === ""
+  ) {
+    return "-";
+  }
+
+  return v;
+
+}
+
+
+function showError(message) {
+
+  const el = document.getElementById("error");
+
+  el.textContent = message;
+
+  el.style.display = "block";
+}
+
+
+function hideError() {
+
+  document.getElementById("error").style.display = "none";
+
+}
 
 </script>
 
-
 </body>
-
 </html>
