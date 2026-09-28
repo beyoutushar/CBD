@@ -1,13 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>CBD Costing System</title>
+  <title>UID Rate Management</title>
 
   <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --background: #f3f4f6;
+      --surface: #ffffff;
+      --border: #d1d5db;
+      --text: #111827;
+      --muted: #6b7280;
+      --success: #15803d;
+      --danger: #b91c1c;
+      --shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    }
 
     * {
       box-sizing: border-box;
@@ -15,1432 +26,1220 @@
 
     body {
       margin: 0;
+      background: var(--background);
+      color: var(--text);
       font-family: Arial, Helvetica, sans-serif;
-      background: #f4f6f8;
-      color: #1f2937;
     }
 
-    /* HEADER */
-
-    .header {
-      background: #1f2937;
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 24px 5%;
       color: white;
-      padding: 22px 25px;
+      background: #111827;
     }
 
-    .header h1 {
+    .app-header h1 {
+      margin: 0 0 6px;
+      font-size: 28px;
+    }
+
+    .app-header p {
       margin: 0;
-      font-size: 25px;
+      color: #d1d5db;
     }
 
-    .header p {
-      margin: 6px 0 0;
-      color: #d1d5db;
+    .container {
+      width: min(1250px, 92%);
+      margin: 28px auto;
+    }
+
+    .dashboard-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      padding: 20px;
+      background: var(--surface);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .card span {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
       font-size: 14px;
     }
 
-    /* CONTAINER */
-
-    .container {
-      max-width: 1200px;
-      margin: 30px auto;
-      padding: 0 20px;
+    .card strong {
+      font-size: 28px;
     }
 
-    /* SEARCH */
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
 
-    .search-box {
+    .tab-button {
+      padding: 11px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
       background: white;
-      padding: 20px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .tab-button:hover {
+      border-color: var(--primary);
+    }
+
+    .tab-button.active {
+      color: white;
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .tab-content {
+      display: none;
+      padding: 24px;
+      background: var(--surface);
       border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .section-heading {
+      margin-bottom: 22px;
+    }
+
+    .section-heading h2 {
+      margin: 0 0 5px;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      color: #374151;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--text);
+      background: white;
+      font: inherit;
+      font-weight: normal;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: 2px solid rgba(37, 99, 235, 0.2);
+      border-color: var(--primary);
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-actions {
       display: flex;
       gap: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      margin-top: 8px;
     }
 
-    .search-box input {
-      flex: 1;
-      padding: 13px 15px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 15px;
-      outline: none;
-    }
-
-    .search-box input:focus {
-      border-color: #2563eb;
-    }
-
-    .search-box button {
-      border: none;
-      background: #2563eb;
-      color: white;
-      padding: 13px 28px;
-      border-radius: 8px;
-      font-size: 15px;
+    .btn {
+      padding: 11px 18px;
+      border: 0;
+      border-radius: 7px;
       cursor: pointer;
+      font-weight: 700;
     }
 
-    .search-box button:hover {
-      background: #1d4ed8;
-    }
-
-    .search-box button:disabled {
-      background: #9ca3af;
+    .btn:disabled {
+      opacity: 0.6;
       cursor: not-allowed;
     }
 
-    /* MESSAGES */
+    .btn.primary {
+      color: white;
+      background: var(--primary);
+    }
+
+    .btn.primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn.secondary {
+      color: #374151;
+      background: #e5e7eb;
+    }
+
+    .btn.secondary:hover {
+      background: #d1d5db;
+    }
 
     .message {
-      margin-top: 15px;
-      padding: 12px 15px;
-      border-radius: 8px;
-      display: none;
-    }
-
-    .loading {
-      background: #e0f2fe;
-      color: #075985;
-    }
-
-    .error {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    /* RESULTS */
-
-    .results {
-      display: none;
-      margin-top: 20px;
-    }
-
-    .section {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    }
-
-    .section-title {
-      font-size: 18px;
-      font-weight: bold;
       margin-bottom: 18px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #e5e7eb;
-    }
-
-    /* FIELDS */
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-    }
-
-    .field {
-      background: #f9fafb;
-      padding: 13px;
+      padding: 13px 16px;
       border-radius: 8px;
-      min-height: 65px;
-    }
-
-    .label {
-      font-size: 12px;
-      color: #6b7280;
-      margin-bottom: 6px;
-    }
-
-    .value {
-      font-size: 14px;
       font-weight: 600;
-      word-break: break-word;
     }
 
-    /* PROCESS */
-
-    .process-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
-
-    .process {
-      padding: 15px;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    .yes {
+    .message.success {
+      color: var(--success);
       background: #dcfce7;
-      color: #166534;
     }
 
-    .no {
-      background: #f3f4f6;
-      color: #6b7280;
+    .message.error {
+      color: var(--danger);
+      background: #fee2e2;
     }
 
-    /* MOBILE */
+    .hidden {
+      display: none;
+    }
 
-    @media (max-width: 800px) {
+    .search-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
 
-      .grid {
+    .search-bar select {
+      max-width: 500px;
+    }
+
+    .search-result {
+      overflow-x: auto;
+    }
+
+    .result-section {
+      margin-bottom: 28px;
+    }
+
+    .result-section h3 {
+      margin-bottom: 10px;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 10px;
+      border: 1px solid var(--border);
+      text-align: left;
+      font-size: 13px;
+    }
+
+    .data-table th {
+      color: white;
+      background: #374151;
+    }
+
+    .data-table tr:nth-child(even) {
+      background: #f9fafb;
+    }
+
+    .empty-result {
+      padding: 20px;
+      color: var(--muted);
+      background: #f9fafb;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 950px) {
+      .dashboard-cards {
         grid-template-columns: repeat(2, 1fr);
       }
 
-      .process-grid {
+      .form-grid {
         grid-template-columns: repeat(2, 1fr);
       }
-
     }
 
-    @media (max-width: 550px) {
-
-      .container {
-        margin: 15px auto;
-        padding: 0 12px;
-      }
-
-      .search-box {
+    @media (max-width: 650px) {
+      .app-header {
+        align-items: flex-start;
         flex-direction: column;
       }
 
-      .search-box button {
-        width: 100%;
-      }
-
-      .grid {
+      .dashboard-cards {
         grid-template-columns: 1fr;
       }
 
-      .process-grid {
+      .form-grid {
         grid-template-columns: 1fr;
       }
 
-      .header {
-        padding: 18px;
+      .full-width {
+        grid-column: auto;
       }
 
-      .header h1 {
-        font-size: 21px;
+      .search-bar {
+        align-items: stretch;
+        flex-direction: column;
       }
 
+      .search-bar select {
+        max-width: none;
+      }
     }
-
   </style>
-
 </head>
-
 
 <body>
 
+  <header class="app-header">
+    <div>
+      <h1>UID Rate Management</h1>
+      <p>UID, customer rate, IKEA rate and monthly data management</p>
+    </div>
 
-<!-- HEADER -->
-
-<div class="header">
-
-  <h1>CBD Costing System</h1>
-
-  <p>Article Lookup & Process Routing</p>
-
-</div>
-
-
-<div class="container">
-
-
-  <!-- SEARCH -->
-
-  <div class="search-box">
-
-    <input
-      id="uidInput"
-      type="text"
-      placeholder="Enter UID / Article ID"
-      autocomplete="off"
-    >
-
-    <button
-      id="searchBtn"
-      onclick="searchUID()"
-    >
-      Search
+    <button id="refreshButton" class="btn secondary">
+      Refresh
     </button>
+  </header>
 
-  </div>
+  <main class="container">
 
+    <div id="messageBox" class="message hidden"></div>
 
-  <!-- LOADING -->
-
-  <div
-    id="loading"
-    class="message loading"
-  >
-    Searching...
-  </div>
-
-
-  <!-- ERROR -->
-
-  <div
-    id="error"
-    class="message error"
-  ></div>
-
-
-  <!-- RESULTS -->
-
-  <div
-    id="results"
-    class="results"
-  >
-
-
-    <!-- ARTICLE INFORMATION -->
-
-    <div class="section">
-
-      <div class="section-title">
-        Article Information
+    <section class="dashboard-cards">
+      <div class="card">
+        <span>Total UIDs</span>
+        <strong id="totalUIDs">0</strong>
       </div>
 
-
-      <div class="grid">
-
-
-        <div class="field">
-
-          <div class="label">
-            Article ID
-          </div>
-
-          <div
-            class="value"
-            id="articleId"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Article Name
-          </div>
-
-          <div
-            class="value"
-            id="articleName"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Article Group
-          </div>
-
-          <div
-            class="value"
-            id="articleGroup"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Customer / Supplier
-          </div>
-
-          <div
-            class="value"
-            id="customer"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Creation Date
-          </div>
-
-          <div
-            class="value"
-            id="creationDate"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Changed Date
-          </div>
-
-          <div
-            class="value"
-            id="changedDate"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Forecast Quantity
-          </div>
-
-          <div
-            class="value"
-            id="forecastQuantity"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Average Order Quantity
-          </div>
-
-          <div
-            class="value"
-            id="averageOrderQuantity"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Board Selection
-          </div>
-
-          <div
-            class="value"
-            id="boardSelection"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Construction
-          </div>
-
-          <div
-            class="value"
-            id="construction"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Net Size m²
-          </div>
-
-          <div
-            class="value"
-            id="netSize"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Weight g
-          </div>
-
-          <div
-            class="value"
-            id="weight"
-          >
-            -
-          </div>
-
-        </div>
-
-
+      <div class="card">
+        <span>Total Rate Records</span>
+        <strong id="totalRates">0</strong>
       </div>
 
-    </div>
-
-
-    <!-- EXISTING COST -->
-
-    <div class="section">
-
-      <div class="section-title">
-        Existing Cost Information
+      <div class="card">
+        <span>Total Monthly Records</span>
+        <strong id="totalMonthlyRecords">0</strong>
       </div>
 
-
-      <div class="grid">
-
-
-        <div class="field">
-
-          <div class="label">
-            Material Cost / 1000 pcs
-          </div>
-
-          <div
-            class="value"
-            id="materialCost"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Corrugation Cost / 1000 pcs
-          </div>
-
-          <div
-            class="value"
-            id="corrugationCost"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Conversion Cost / 1000 pcs
-          </div>
-
-          <div
-            class="value"
-            id="conversionCost"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Packaging Cost / 1000 pcs
-          </div>
-
-          <div
-            class="value"
-            id="packagingCost"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Production Cost / 1000 pcs
-          </div>
-
-          <div
-            class="value"
-            id="productionCost"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Other Cost / 1000 pcs
-          </div>
-
-          <div
-            class="value"
-            id="otherCost"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Profit / 1000 pcs
-          </div>
-
-          <div
-            class="value"
-            id="profit"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Price Excl. Commission
-          </div>
-
-          <div
-            class="value"
-            id="priceExclCommission"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            IKEA Commission
-          </div>
-
-          <div
-            class="value"
-            id="commission"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Price Incl. Commission
-          </div>
-
-          <div
-            class="value"
-            id="priceInclCommission"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Pallet Cost
-          </div>
-
-          <div
-            class="value"
-            id="palletCost"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Transport Cost
-          </div>
-
-          <div
-            class="value"
-            id="transportCost"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            DDP
-          </div>
-
-          <div
-            class="value"
-            id="ddu"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Tool Cost
-          </div>
-
-          <div
-            class="value"
-            id="toolCost"
-          >
-            -
-          </div>
-
-        </div>
-
-
-        <div class="field">
-
-          <div class="label">
-            Extra Cost
-          </div>
-
-          <div
-            class="value"
-            id="extraCost"
-          >
-            -
-          </div>
-
-        </div>
-
-
+      <div class="card">
+        <span>Total Material Records</span>
+        <strong id="totalMaterialRecords">0</strong>
+      </div>
+    </section>
+
+    <nav class="tabs">
+      <button class="tab-button active" data-tab="uidTab">
+        UID Master
+      </button>
+
+      <button class="tab-button" data-tab="rateTab">
+        Rate History
+      </button>
+
+      <button class="tab-button" data-tab="monthlyTab">
+        Monthly Data
+      </button>
+
+      <button class="tab-button" data-tab="materialTab">
+        Material Data
+      </button>
+
+      <button class="tab-button" data-tab="searchTab">
+        Search UID
+      </button>
+    </nav>
+
+    <!-- UID MASTER TAB -->
+    <section id="uidTab" class="tab-content active">
+      <div class="section-heading">
+        <h2>Add UID</h2>
+        <p>Enter permanent article details one time.</p>
       </div>
 
-    </div>
+      <form id="uidForm" class="form-grid">
 
+        <label>
+          UID *
+          <input type="text" name="UID" required>
+        </label>
 
-    <!-- PROCESS ROUTING -->
+        <label>
+          IKEA Comp Art No
+          <input type="text" name="IKEA Comp Art No">
+        </label>
 
-    <div class="section">
+        <label>
+          NPS Reference
+          <input type="text" name="NPS Reference">
+        </label>
 
-      <div class="section-title">
-        Process Routing
+        <label>
+          Article Type
+          <input type="text" name="Article Type">
+        </label>
+
+        <label>
+          Article Name
+          <input type="text" name="Article Name">
+        </label>
+
+        <label>
+          IKEA Supplier Name
+          <input type="text" name="IKEA Supplier Name">
+        </label>
+
+        <label>
+          IKEA Supplier Number
+          <input type="text" name="IKEA Supplier Number">
+        </label>
+
+        <label>
+          Customer Number
+          <input type="text" name="Customer Number">
+        </label>
+
+        <label>
+          Quality Code
+          <input type="text" name="Quality Code">
+        </label>
+
+        <label>
+          MSS Status
+          <input type="text" name="MSS Status">
+        </label>
+
+        <label>
+          Foot Type
+          <select name="Foot Type">
+            <option value="">Select foot type</option>
+            <option value="180x90">180x90</option>
+            <option value="140x90">140x90</option>
+            <option value="90x90">90x90</option>
+          </select>
+        </label>
+
+        <label>
+          Article Net Size m2
+          <input type="number" step="0.0001" name="Article Net Size m2">
+        </label>
+
+        <label>
+          Weight Kg/1000pcs
+          <input type="number" step="0.0001" name="Weight Kg/1000pcs">
+        </label>
+
+        <label>
+          Status
+          <select name="Status">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </label>
+
+        <label class="full-width">
+          Remarks
+          <textarea name="Remarks" rows="3"></textarea>
+        </label>
+
+        <div class="form-actions full-width">
+          <button type="submit" class="btn primary">
+            Save UID
+          </button>
+
+          <button type="reset" class="btn secondary">
+            Clear
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- RATE HISTORY TAB -->
+    <section id="rateTab" class="tab-content">
+      <div class="section-heading">
+        <h2>Add Rate History</h2>
+        <p>Add a new row whenever a rate changes. Do not overwrite old rates.</p>
       </div>
 
+      <form id="rateForm" class="form-grid">
 
-      <div
-        id="processGrid"
-        class="process-grid"
-      ></div>
+        <label>
+          UID *
+          <select name="UID" class="uid-select" required>
+            <option value="">Select UID</option>
+          </select>
+        </label>
 
-    </div>
+        <label>
+          Effective From *
+          <input type="date" name="Effective From" required>
+        </label>
 
+        <label>
+          Effective To
+          <input type="date" name="Effective To">
+        </label>
 
-  </div>
+        <label>
+          Customer
+          <input type="text" name="Customer">
+        </label>
 
+        <label>
+          Currency
+          <select name="Currency">
+            <option value="THB">THB</option>
+            <option value="EUR">EUR</option>
+            <option value="INR">INR</option>
+          </select>
+        </label>
 
-</div>
+        <label>
+          GSM
+          <input type="number" step="0.01" name="GSM">
+        </label>
 
+        <label>
+          BF
+          <input type="number" step="0.01" name="BF">
+        </label>
 
-<script>
+        <label>
+          Cutting
+          <input type="number" step="0.01" name="Cutting">
+        </label>
 
+        <label>
+          Printing
+          <input type="number" step="0.01" name="Printing">
+        </label>
 
-/*
-==================================================
-GOOGLE APPS SCRIPT API
-==================================================
-*/
+        <label>
+          Gluing
+          <input type="number" step="0.01" name="Gluing">
+        </label>
 
-const API_URL =
-"https://script.google.com/macros/s/AKfycby8R0VO2N60Kbgd-krxXuVzp2AtoJ8ORKqk0-h6VxfFUqjRJuvLGfQX4l95Gow-GZXv3w/exec";
+        <label>
+          Conversion Rate
+          <input type="number" step="0.01" name="Conversion Rate">
+        </label>
 
+        <label>
+          Packaging Rate
+          <input type="number" step="0.01" name="Packaging Rate">
+        </label>
 
-/*
-==================================================
-ENTER KEY
-==================================================
-*/
+        <label>
+          Other Rate
+          <input type="number" step="0.01" name="Other Rate">
+        </label>
 
-document
-  .getElementById("uidInput")
-  .addEventListener(
-    "keydown",
-    function(event) {
+        <label>
+          Fixed Rate
+          <input type="number" step="0.01" name="Fixed Rate">
+        </label>
 
-      if (event.key === "Enter") {
+        <label>
+          IKEA Rate
+          <input type="number" step="0.01" name="IKEA Rate">
+        </label>
 
-        searchUID();
+        <label>
+          Final Customer Rate
+          <input type="number" step="0.01" name="Final Customer Rate">
+        </label>
 
-      }
+        <label class="full-width">
+          Remarks
+          <textarea name="Remarks" rows="3"></textarea>
+        </label>
 
+        <div class="form-actions full-width">
+          <button type="submit" class="btn primary">
+            Save Rate
+          </button>
+
+          <button type="reset" class="btn secondary">
+            Clear
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- MONTHLY DATA TAB -->
+    <section id="monthlyTab" class="tab-content">
+      <div class="section-heading">
+        <h2>Add Monthly Data</h2>
+        <p>Enter one row for each UID and report month.</p>
+      </div>
+
+      <form id="monthlyForm" class="form-grid">
+
+        <label>
+          Report Month *
+          <input type="month" name="Report Month" required>
+        </label>
+
+        <label>
+          UID *
+          <select name="UID" class="uid-select" required>
+            <option value="">Select UID</option>
+          </select>
+        </label>
+
+        <label>
+          Quantity PCS
+          <input type="number" step="1" name="Quantity PCS">
+        </label>
+
+        <label>
+          Confirmed Claimed Quantity
+          <input type="number" step="1" name="Confirmed Claimed Quantity">
+        </label>
+
+        <label>
+          Defect Classification
+          <select name="Defect Classification">
+            <option value="">Select defect</option>
+            <option value="10.1 Transport damage">10.1 Transport damage</option>
+            <option value="10.2 Quantity">10.2 Quantity</option>
+            <option value="10.3 Bending">10.3 Bending</option>
+            <option value="10.4 Corrugated board Delamination">
+              10.4 Corrugated board Delamination
+            </option>
+            <option value="10.5 Dimensional deviation">
+              10.5 Dimensional deviation
+            </option>
+            <option value="10.6 Cracks">10.6 Cracks</option>
+            <option value="10.7 Cutting">10.7 Cutting</option>
+            <option value="10.8 Gluing">10.8 Gluing</option>
+            <option value="10.9 Mechanical parameters">
+              10.9 Mechanical parameters
+            </option>
+            <option value="10.10 Printing">10.10 Printing</option>
+            <option value="10.11 Appearance defect">
+              10.11 Appearance defect
+            </option>
+            <option value="10.12 Other defects">
+              10.12 Other defects
+            </option>
+          </select>
+        </label>
+
+        <label>
+          End of Month Stock PCS
+          <input type="number" step="1" name="End of Month Stock PCS">
+        </label>
+
+        <label>
+          Item in PipeChain
+          <select name="Item in PipeChain">
+            <option value="">Select</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </label>
+
+        <label class="full-width">
+          Remarks
+          <textarea name="Remarks" rows="3"></textarea>
+        </label>
+
+        <div class="form-actions full-width">
+          <button type="submit" class="btn primary">
+            Save Monthly Data
+          </button>
+
+          <button type="reset" class="btn secondary">
+            Clear
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- MATERIAL DATA TAB -->
+    <section id="materialTab" class="tab-content">
+      <div class="section-heading">
+        <h2>Add Material Data</h2>
+        <p>Store paper, board, PM and starch as separate records.</p>
+      </div>
+
+      <form id="materialForm" class="form-grid">
+
+        <label>
+          Report Month *
+          <input type="month" name="Report Month" required>
+        </label>
+
+        <label>
+          UID *
+          <select name="UID" class="uid-select" required>
+            <option value="">Select UID</option>
+          </select>
+        </label>
+
+        <label>
+          Material Type
+          <select name="Material Type">
+            <option value="">Select type</option>
+            <option value="Paper">Paper</option>
+            <option value="Board">Board</option>
+            <option value="PM">PM</option>
+            <option value="Starch">Starch</option>
+          </select>
+        </label>
+
+        <label>
+          Material ID
+          <input type="text" name="Material ID">
+        </label>
+
+        <label>
+          Material Description
+          <input type="text" name="Material Description">
+        </label>
+
+        <label>
+          GSM
+          <input type="number" step="0.01" name="GSM">
+        </label>
+
+        <label>
+          Kg per 1000 PCS
+          <input type="number" step="0.0001" name="Kg per 1000 PCS">
+        </label>
+
+        <label>
+          Total Kg
+          <input type="number" step="0.0001" name="Total Kg">
+        </label>
+
+        <label>
+          Waste Percentage
+          <input type="number" step="0.01" name="Waste Percentage">
+        </label>
+
+        <label class="full-width">
+          Remarks
+          <textarea name="Remarks" rows="3"></textarea>
+        </label>
+
+        <div class="form-actions full-width">
+          <button type="submit" class="btn primary">
+            Save Material Data
+          </button>
+
+          <button type="reset" class="btn secondary">
+            Clear
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- SEARCH TAB -->
+    <section id="searchTab" class="tab-content">
+      <div class="section-heading">
+        <h2>Search UID</h2>
+        <p>View master details, rates, monthly data and materials.</p>
+      </div>
+
+      <div class="search-bar">
+        <select id="searchUID" class="uid-select">
+          <option value="">Select UID</option>
+        </select>
+
+        <button id="searchButton" class="btn primary">
+          Search
+        </button>
+      </div>
+
+      <div id="searchResult" class="search-result"></div>
+    </section>
+
+  </main>
+
+  <script>
+    /*
+      IMPORTANT:
+      Replace the value below with your Apps Script Web App URL.
+
+      Example:
+      const API_URL =
+        'https://script.google.com/macros/s/AKfycby8R0VO2N60Kbgd-krxXuVzp2AtoJ8ORKqk0-h6VxfFUqjRJuvLGfQX4l95Gow-GZXv3w/exec';
+    */
+
+    const API_URL =
+      'https://script.google.com/macros/s/AKfycby8R0VO2N60Kbgd-krxXuVzp2AtoJ8ORKqk0-h6VxfFUqjRJuvLGfQX4l95Gow-GZXv3w/exec';
+
+    const state = {
+      uids: [],
+      uidRows: [],
+      rateRows: [],
+      monthlyRows: [],
+      materialRows: []
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setupTabs();
+      setupForms();
+      setupButtons();
+      loadInitialData();
+    });
+
+    function setupTabs() {
+      const tabButtons =
+        document.querySelectorAll('.tab-button');
+
+      const tabContents =
+        document.querySelectorAll('.tab-content');
+
+      tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const targetTab = button.dataset.tab;
+
+          tabButtons.forEach(item => {
+            item.classList.remove('active');
+          });
+
+          tabContents.forEach(item => {
+            item.classList.remove('active');
+          });
+
+          button.classList.add('active');
+
+          document
+            .getElementById(targetTab)
+            .classList.add('active');
+        });
+      });
     }
-  );
 
-
-/*
-==================================================
-SEARCH UID
-==================================================
-*/
-
-function searchUID() {
-
-  const input =
-    document.getElementById("uidInput");
-
-  const uid =
-    input.value.trim();
-
-
-  if (!uid) {
-
-    showError(
-      "Please enter a UID / Article ID."
-    );
-
-    return;
-
-  }
-
-
-  hideError();
-
-  document
-    .getElementById("results")
-    .style.display = "none";
-
-
-  document
-    .getElementById("loading")
-    .style.display = "block";
-
-
-  const button =
-    document.getElementById("searchBtn");
-
-
-  button.disabled = true;
-
-  button.textContent =
-    "Searching...";
-
-
-  /*
-  Create JSONP callback
-  */
-
-  const callbackName =
-    "cbdCallback_" +
-    Date.now();
-
-
-  /*
-  Callback function
-  */
-
-  window[callbackName] =
-    function(response) {
-
+    function setupForms() {
+      document
+        .getElementById('uidForm')
+        .addEventListener('submit', event => {
+          submitForm(
+            event,
+            'saveUID',
+            'UID saved successfully'
+          );
+        });
 
       document
-        .getElementById("loading")
-        .style.display = "none";
-
-
-      button.disabled = false;
-
-      button.textContent =
-        "Search";
-
-
-      /*
-      Article result
-      */
-
-      if (
-        !response ||
-        !response.article ||
-        !response.article.success
-      ) {
-
-        showError(
-          response &&
-          response.article &&
-          response.article.message
-
-            ? response.article.message
-
-            : "UID not found."
-        );
-
-
-        cleanup(
-          callbackName
-        );
-
-        return;
-
-      }
-
-
-      /*
-      Display article
-      */
-
-      displayArticle(
-        response.article.data
-      );
-
-
-      /*
-      Display routing
-      */
-
-      displayRouting(
-        response.routing
-      );
-
-
-      cleanup(
-        callbackName
-      );
-
-    };
-
-
-  /*
-  Create script request
-  */
-
-  const script =
-    document.createElement("script");
-
-
-  script.id =
-    callbackName;
-
-
-  script.src =
-    API_URL +
-    "?uid=" +
-    encodeURIComponent(uid) +
-    "&callback=" +
-    callbackName;
-
-
-  /*
-  Connection error
-  */
-
-  script.onerror =
-    function() {
-
+        .getElementById('rateForm')
+        .addEventListener('submit', event => {
+          submitForm(
+            event,
+            'saveRate',
+            'Rate saved successfully'
+          );
+        });
 
       document
-        .getElementById("loading")
-        .style.display = "none";
-
-
-      button.disabled = false;
-
-      button.textContent =
-        "Search";
-
-
-      showError(
-        "Could not connect to the Google Sheets server."
-      );
-
-
-      cleanup(
-        callbackName
-      );
-
-    };
-
-
-  document
-    .body
-    .appendChild(script);
-
-}
-
-
-/*
-==================================================
-DISPLAY ARTICLE
-==================================================
-*/
-
-function displayArticle(data) {
-
-
-  setValue(
-    "articleId",
-    data.articleId
-  );
-
-
-  setValue(
-    "articleName",
-    data.articleName
-  );
-
-
-  setValue(
-    "articleGroup",
-    data.articleGroup
-  );
-
-
-  setValue(
-    "customer",
-    data.customer
-  );
-
-
-  setValue(
-    "creationDate",
-    data.creationDate
-  );
-
-
-  setValue(
-    "changedDate",
-    data.changedDate
-  );
-
-
-  setValue(
-    "forecastQuantity",
-    data.forecastQuantity
-  );
-
-
-  setValue(
-    "averageOrderQuantity",
-    data.averageOrderQuantity
-  );
-
-
-  setValue(
-    "boardSelection",
-    data.boardSelection
-  );
-
-
-  setValue(
-    "construction",
-    data.construction
-  );
-
-
-  setValue(
-    "netSize",
-    data.netSize
-  );
-
-
-  setValue(
-    "weight",
-    data.weight
-  );
-
-
-  setValue(
-    "materialCost",
-    data.materialCost
-  );
-
-
-  setValue(
-    "corrugationCost",
-    data.corrugationCost
-  );
-
-
-  setValue(
-    "conversionCost",
-    data.conversionCost
-  );
-
-
-  setValue(
-    "packagingCost",
-    data.packagingCost
-  );
-
-
-  setValue(
-    "productionCost",
-    data.productionCost
-  );
-
-
-  setValue(
-    "otherCost",
-    data.otherCost
-  );
-
-
-  setValue(
-    "profit",
-    data.profit
-  );
-
-
-  setValue(
-    "priceExclCommission",
-    data.priceExclCommission
-  );
-
-
-  setValue(
-    "commission",
-    data.commission
-  );
-
-
-  setValue(
-    "priceInclCommission",
-    data.priceInclCommission
-  );
-
-
-  setValue(
-    "palletCost",
-    data.palletCost
-  );
-
-
-  setValue(
-    "transportCost",
-    data.transportCost
-  );
-
-
-  setValue(
-    "ddu",
-    data.ddu
-  );
-
-
-  setValue(
-    "toolCost",
-    data.toolCost
-  );
-
-
-  setValue(
-    "extraCost",
-    data.extraCost
-  );
-
-
-  document
-    .getElementById("results")
-    .style.display = "block";
-
-}
-
-
-/*
-==================================================
-DISPLAY ROUTING
-==================================================
-*/
-
-function displayRouting(route) {
-
-
-  const grid =
-    document.getElementById(
-      "processGrid"
-    );
-
-
-  grid.innerHTML = "";
-
-
-  if (
-    !route ||
-    !route.success ||
-    !route.data
-  ) {
-
-    grid.innerHTML =
-      '<div class="process no">' +
-      'No routing information available' +
-      '</div>';
-
-    return;
-
-  }
-
-
-  const routing =
-    route.data;
-
-
-  let count =
-    0;
-
-
-  Object.keys(routing)
-    .forEach(
-      function(key) {
-
-
-        /*
-        Do not show UID itself
-        */
-
+        .getElementById('monthlyForm')
+        .addEventListener('submit', event => {
+          submitForm(
+            event,
+            'saveMonthly',
+            'Monthly data saved successfully'
+          );
+        });
+
+      document
+        .getElementById('materialForm')
+        .addEventListener('submit', event => {
+          submitForm(
+            event,
+            'saveMaterial',
+            'Material data saved successfully'
+          );
+        });
+    }
+
+    function setupButtons() {
+      document
+        .getElementById('refreshButton')
+        .addEventListener('click', loadInitialData);
+
+      document
+        .getElementById('searchButton')
+        .addEventListener('click', searchUID);
+    }
+
+    async function loadInitialData() {
+      try {
         if (
-          key === "UID" ||
-          key === "Article ID" ||
-          key === "Unique Identifier"
+          API_URL ===
+          'https://script.google.com/macros/s/AKfycby8R0VO2N60Kbgd-krxXuVzp2AtoJ8ORKqk0-h6VxfFUqjRJuvLGfQX4l95Gow-GZXv3w/exec'
         ) {
+          showMessage(
+            'Please add your Apps Script Web App URL in index.html',
+            'error'
+          );
 
           return;
-
         }
 
+        showMessage('Loading data...', 'success');
 
-        count++;
-
-
-        const rawValue =
-          routing[key];
-
-
-        const value =
-          String(
-            rawValue || ""
-          )
-          .trim()
-          .toUpperCase();
-
-
-        const isYes =
-          value === "YES";
-
-
-        const div =
-          document.createElement(
-            "div"
-          );
-
-
-        div.className =
-          "process " +
-          (
-            isYes
-              ? "yes"
-              : "no"
-          );
-
-
-        div.textContent =
-          (
-            isYes
-              ? "✓ "
-              : "✗ "
-          ) +
-          key;
-
-
-        grid.appendChild(
-          div
+        const response = await fetch(
+          `${API_URL}?action=getInitialData`
         );
 
+        const result = await response.json();
+
+        if (!result.success) {
+          throw new Error(result.message);
+        }
+
+        state.uids = result.data.uids || [];
+        state.uidRows = result.data.uidRows || [];
+        state.rateRows = result.data.rateRows || [];
+        state.monthlyRows =
+          result.data.monthlyRows || [];
+        state.materialRows =
+          result.data.materialRows || [];
+
+        updateDashboard();
+        populateUIDDropdowns();
+
+        showMessage(
+          'Data loaded successfully',
+          'success'
+        );
+
+      } catch (error) {
+        showMessage(
+          'Could not connect to Apps Script: ' +
+          error.message,
+          'error'
+        );
       }
-    );
+    }
 
+    function updateDashboard() {
+      document.getElementById('totalUIDs')
+        .textContent = state.uidRows.length;
 
-  if (count === 0) {
+      document.getElementById('totalRates')
+        .textContent = state.rateRows.length;
 
-    grid.innerHTML =
-      '<div class="process no">' +
-      'No process routing available' +
-      '</div>';
+      document.getElementById('totalMonthlyRecords')
+        .textContent = state.monthlyRows.length;
 
-  }
+      document.getElementById('totalMaterialRecords')
+        .textContent = state.materialRows.length;
+    }
 
-}
+    function populateUIDDropdowns() {
+      const dropdowns =
+        document.querySelectorAll('.uid-select');
 
+      dropdowns.forEach(dropdown => {
+        const currentValue = dropdown.value;
 
-/*
-==================================================
-SET VALUE
-==================================================
-*/
+        dropdown.innerHTML = `
+          <option value="">Select UID</option>
+        `;
 
-function setValue(
-  id,
-  value
-) {
+        state.uids.forEach(item => {
+          const option =
+            document.createElement('option');
 
+          option.value = item.uid;
 
-  const element =
-    document.getElementById(id);
+          option.textContent =
+            `${item.uid} - ${item.articleName || ''}`;
 
+          dropdown.appendChild(option);
+        });
 
-  if (!element) {
+        dropdown.value = currentValue;
+      });
+    }
 
-    return;
+    async function submitForm(
+      event,
+      action,
+      successMessage
+    ) {
+      event.preventDefault();
 
-  }
+      const form = event.target;
+      const data = formToObject(form);
+      const submitButton =
+        form.querySelector('button[type="submit"]');
 
+      try {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Saving...';
 
-  if (
-    value === null ||
-    value === undefined ||
-    value === ""
-  ) {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: action,
+            data: data
+          })
+        });
 
-    element.textContent =
-      "-";
+        const result = await response.json();
 
-  } else {
+        if (!result.success) {
+          throw new Error(result.message);
+        }
 
-    element.textContent =
-      value;
+        showMessage(successMessage, 'success');
 
-  }
+        form.reset();
 
-}
+        await loadInitialData();
 
+      } catch (error) {
+        showMessage(
+          'Save failed: ' + error.message,
+          'error'
+        );
 
-/*
-==================================================
-ERROR
-==================================================
-*/
+      } finally {
+        submitButton.disabled = false;
 
-function showError(
-  message
-) {
+        if (action === 'saveUID') {
+          submitButton.textContent = 'Save UID';
+        }
 
+        if (action === 'saveRate') {
+          submitButton.textContent = 'Save Rate';
+        }
 
-  const error =
-    document.getElementById(
-      "error"
-    );
+        if (action === 'saveMonthly') {
+          submitButton.textContent =
+            'Save Monthly Data';
+        }
 
+        if (action === 'saveMaterial') {
+          submitButton.textContent =
+            'Save Material Data';
+        }
+      }
+    }
 
-  error.textContent =
-    message;
+    function formToObject(form) {
+      const formData = new FormData(form);
+      const data = {};
 
+      formData.forEach((value, key) => {
+        data[key] = value;
+      });
 
-  error.style.display =
-    "block";
+      return data;
+    }
 
-}
+    function showMessage(message, type) {
+      const box =
+        document.getElementById('messageBox');
 
+      box.textContent = message;
+      box.className = `message ${type}`;
 
-/*
-==================================================
-HIDE ERROR
-==================================================
-*/
+      window.clearTimeout(showMessage.timeout);
 
-function hideError() {
+      showMessage.timeout = window.setTimeout(() => {
+        box.className = 'message hidden';
+      }, 5000);
+    }
 
-  document
-    .getElementById("error")
-    .style.display =
-    "none";
+    async function searchUID() {
+      const uid =
+        document.getElementById('searchUID').value;
 
-}
+      const resultBox =
+        document.getElementById('searchResult');
 
+      if (!uid) {
+        resultBox.innerHTML = `
+          <div class="empty-result">
+            Please select a UID.
+          </div>
+        `;
 
-/*
-==================================================
-CLEANUP JSONP
-==================================================
-*/
+        return;
+      }
 
-function cleanup(
-  callbackName
-) {
+      try {
+        resultBox.innerHTML = `
+          <div class="empty-result">
+            Loading UID details...
+          </div>
+        `;
 
+        const response = await fetch(
+          `${API_URL}&action=getUIDDetails&uid=${
+            encodeURIComponent(uid)
+          }`
+        );
 
-  try {
+        const result = await response.json();
 
-    delete window[
-      callbackName
-    ];
+        if (!result.success) {
+          throw new Error(result.message);
+        }
 
-  } catch (e) {
+        displayUIDDetails(result.data);
 
-  }
+      } catch (error) {
+        resultBox.innerHTML = `
+          <div class="empty-result">
+            ${escapeHtml(error.message)}
+          </div>
+        `;
+      }
+    }
 
+    function displayUIDDetails(data) {
+      const resultBox =
+        document.getElementById('searchResult');
 
-  const script =
-    document.getElementById(
-      callbackName
-    );
+      let html = '';
 
+      html += `
+        <div class="result-section">
+          <h3>UID Master Details</h3>
+          ${
+            createTable(
+              data.uid ? [data.uid] : []
+            )
+          }
+        </div>
+      `;
 
-  if (script) {
+      html += `
+        <div class="result-section">
+          <h3>Rate History</h3>
+          ${
+            createTable(data.rates || [])
+          }
+        </div>
+      `;
 
-    script.remove();
+      html += `
+        <div class="result-section">
+          <h3>Monthly Data</h3>
+          ${
+            createTable(data.monthly || [])
+          }
+        </div>
+      `;
 
-  }
+      html += `
+        <div class="result-section">
+          <h3>Material Data</h3>
+          ${
+            createTable(data.materials || [])
+          }
+        </div>
+      `;
 
-}
+      resultBox.innerHTML = html;
+    }
 
-</script>
+    function createTable(rows) {
+      if (!rows || rows.length === 0) {
+        return `
+          <div class="empty-result">
+            No records found.
+          </div>
+        `;
+      }
 
+      const headers = Object.keys(rows[0]);
+
+      const headerHtml = headers
+        .map(header => {
+          return `
+            <th>${escapeHtml(header)}</th>
+          `;
+        })
+        .join('');
+
+      const bodyHtml = rows
+        .map(row => {
+          const cells = headers
+            .map(header => {
+              return `
+                <td>
+                  ${escapeHtml(row[header])}
+                </td>
+              `;
+            })
+            .join('');
+
+          return `<tr>${cells}</tr>`;
+        })
+        .join('');
+
+      return `
+        <table class="data-table">
+          <thead>
+            <tr>${headerHtml}</tr>
+          </thead>
+
+          <tbody>
+            ${bodyHtml}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function escapeHtml(value) {
+      if (value === null || value === undefined) {
+        return '';
+      }
+
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+  </script>
 
 </body>
-
 </html>
