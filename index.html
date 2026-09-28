@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>UID Rate Management</title>
+  <title>UID Extra Data Entry</title>
 
   <style>
     :root {
@@ -26,116 +26,54 @@
 
     body {
       margin: 0;
-      background: var(--background);
       color: var(--text);
+      background: var(--background);
       font-family: Arial, Helvetica, sans-serif;
     }
 
-    .app-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
+    .header {
       padding: 24px 5%;
       color: white;
       background: #111827;
     }
 
-    .app-header h1 {
+    .header h1 {
       margin: 0 0 6px;
       font-size: 28px;
     }
 
-    .app-header p {
+    .header p {
       margin: 0;
       color: #d1d5db;
     }
 
     .container {
-      width: min(1250px, 92%);
+      width: min(1000px, 92%);
       margin: 28px auto;
     }
 
-    .dashboard-cards {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 18px;
-      margin-bottom: 24px;
-    }
-
-    .card {
-      padding: 20px;
-      background: var(--surface);
-      border-radius: 12px;
-      box-shadow: var(--shadow);
-    }
-
-    .card span {
-      display: block;
-      margin-bottom: 8px;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .card strong {
-      font-size: 28px;
-    }
-
-    .tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 18px;
-    }
-
-    .tab-button {
-      padding: 11px 16px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      background: white;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .tab-button:hover {
-      border-color: var(--primary);
-    }
-
-    .tab-button.active {
-      color: white;
-      background: var(--primary);
-      border-color: var(--primary);
-    }
-
-    .tab-content {
-      display: none;
+    .panel {
+      margin-bottom: 22px;
       padding: 24px;
       background: var(--surface);
       border-radius: 12px;
       box-shadow: var(--shadow);
     }
 
-    .tab-content.active {
-      display: block;
+    .panel h2 {
+      margin-top: 0;
+      margin-bottom: 6px;
     }
 
-    .section-heading {
+    .panel-description {
+      margin-top: 0;
       margin-bottom: 22px;
-    }
-
-    .section-heading h2 {
-      margin: 0 0 5px;
-    }
-
-    .section-heading p {
-      margin: 0;
       color: var(--muted);
     }
 
     .form-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 18px;
     }
 
@@ -161,6 +99,11 @@
       font-weight: normal;
     }
 
+    input[readonly] {
+      color: #4b5563;
+      background: #f3f4f6;
+    }
+
     input:focus,
     select:focus,
     textarea:focus {
@@ -169,6 +112,7 @@
     }
 
     textarea {
+      min-height: 90px;
       resize: vertical;
     }
 
@@ -176,13 +120,13 @@
       grid-column: 1 / -1;
     }
 
-    .form-actions {
+    .button-row {
       display: flex;
       gap: 10px;
-      margin-top: 8px;
+      margin-top: 6px;
     }
 
-    .btn {
+    button {
       padding: 11px 18px;
       border: 0;
       border-radius: 7px;
@@ -190,26 +134,26 @@
       font-weight: 700;
     }
 
-    .btn:disabled {
-      opacity: 0.6;
+    button:disabled {
       cursor: not-allowed;
+      opacity: 0.6;
     }
 
-    .btn.primary {
+    .primary-button {
       color: white;
       background: var(--primary);
     }
 
-    .btn.primary:hover {
+    .primary-button:hover {
       background: var(--primary-dark);
     }
 
-    .btn.secondary {
+    .secondary-button {
       color: #374151;
       background: #e5e7eb;
     }
 
-    .btn.secondary:hover {
+    .secondary-button:hover {
       background: #d1d5db;
     }
 
@@ -234,79 +178,44 @@
       display: none;
     }
 
-    .search-bar {
-      display: flex;
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 12px;
-      margin-bottom: 24px;
+      margin-top: 18px;
     }
 
-    .search-bar select {
-      max-width: 500px;
-    }
-
-    .search-result {
-      overflow-x: auto;
-    }
-
-    .result-section {
-      margin-bottom: 28px;
-    }
-
-    .result-section h3 {
-      margin-bottom: 10px;
-    }
-
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 700px;
-    }
-
-    .data-table th,
-    .data-table td {
-      padding: 10px;
+    .detail-box {
+      padding: 12px;
       border: 1px solid var(--border);
-      text-align: left;
-      font-size: 13px;
-    }
-
-    .data-table th {
-      color: white;
-      background: #374151;
-    }
-
-    .data-table tr:nth-child(even) {
-      background: #f9fafb;
-    }
-
-    .empty-result {
-      padding: 20px;
-      color: var(--muted);
-      background: #f9fafb;
       border-radius: 8px;
+      background: #f9fafb;
     }
 
-    @media (max-width: 950px) {
-      .dashboard-cards {
-        grid-template-columns: repeat(2, 1fr);
-      }
+    .detail-label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 12px;
+    }
 
+    .detail-value {
+      display: block;
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .loading {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 700px) {
       .form-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 650px) {
-      .app-header {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .dashboard-cards {
         grid-template-columns: 1fr;
       }
 
-      .form-grid {
+      .details-grid {
         grid-template-columns: 1fr;
       }
 
@@ -314,13 +223,12 @@
         grid-column: auto;
       }
 
-      .search-bar {
-        align-items: stretch;
+      .button-row {
         flex-direction: column;
       }
 
-      .search-bar select {
-        max-width: none;
+      button {
+        width: 100%;
       }
     }
   </style>
@@ -328,582 +236,234 @@
 
 <body>
 
-  <header class="app-header">
-    <div>
-      <h1>UID Rate Management</h1>
-      <p>UID, customer rate, IKEA rate and monthly data management</p>
-    </div>
-
-    <button id="refreshButton" class="btn secondary">
-      Refresh
-    </button>
+  <header class="header">
+    <h1>UID Extra Data Entry</h1>
+    <p>Enter Topliner, Midliner, Flute Type, Deckle and Cutting information</p>
   </header>
 
   <main class="container">
 
     <div id="messageBox" class="message hidden"></div>
 
-    <section class="dashboard-cards">
-      <div class="card">
-        <span>Total UIDs</span>
-        <strong id="totalUIDs">0</strong>
-      </div>
+    <!-- SELECT EXISTING UID -->
+    <section class="panel">
+      <h2>Select Existing UID</h2>
 
-      <div class="card">
-        <span>Total Rate Records</span>
-        <strong id="totalRates">0</strong>
-      </div>
+      <p class="panel-description">
+        Select a UID that already exists in your Google Sheet.
+      </p>
 
-      <div class="card">
-        <span>Total Monthly Records</span>
-        <strong id="totalMonthlyRecords">0</strong>
-      </div>
+      <label>
+        Existing UID *
+        <select id="uidSelect">
+          <option value="">Loading UIDs...</option>
+        </select>
+      </label>
 
-      <div class="card">
-        <span>Total Material Records</span>
-        <strong id="totalMaterialRecords">0</strong>
+      <div id="loadingText" class="loading"></div>
+
+      <div id="existingDetails" class="details-grid hidden">
+        <div class="detail-box">
+          <span class="detail-label">UID</span>
+          <span id="detailUID" class="detail-value">-</span>
+        </div>
+
+        <div class="detail-box">
+          <span class="detail-label">IKEA Comp Art No</span>
+          <span id="detailArticleNo" class="detail-value">-</span>
+        </div>
+
+        <div class="detail-box">
+          <span class="detail-label">Article Name</span>
+          <span id="detailArticleName" class="detail-value">-</span>
+        </div>
+
+        <div class="detail-box">
+          <span class="detail-label">NPS Reference</span>
+          <span id="detailNPS" class="detail-value">-</span>
+        </div>
+
+        <div class="detail-box">
+          <span class="detail-label">Supplier</span>
+          <span id="detailSupplier" class="detail-value">-</span>
+        </div>
+
+        <div class="detail-box">
+          <span class="detail-label">Foot Type</span>
+          <span id="detailFootType" class="detail-value">-</span>
+        </div>
       </div>
     </section>
 
-    <nav class="tabs">
-      <button class="tab-button active" data-tab="uidTab">
-        UID Master
-      </button>
+    <!-- EXTRA DATA FORM -->
+    <section class="panel">
+      <h2>Additional Data</h2>
 
-      <button class="tab-button" data-tab="rateTab">
-        Rate History
-      </button>
+      <p class="panel-description">
+        Enter only the additional values required for the selected UID.
+      </p>
 
-      <button class="tab-button" data-tab="monthlyTab">
-        Monthly Data
-      </button>
-
-      <button class="tab-button" data-tab="materialTab">
-        Material Data
-      </button>
-
-      <button class="tab-button" data-tab="searchTab">
-        Search UID
-      </button>
-    </nav>
-
-    <!-- UID MASTER TAB -->
-    <section id="uidTab" class="tab-content active">
-      <div class="section-heading">
-        <h2>Add UID</h2>
-        <p>Enter permanent article details one time.</p>
-      </div>
-
-      <form id="uidForm" class="form-grid">
+      <form id="extraDataForm" class="form-grid">
 
         <label>
-          UID *
-          <input type="text" name="UID" required>
+          UID
+          <input
+            type="text"
+            id="formUID"
+            name="UID"
+            readonly
+            required
+          >
         </label>
 
         <label>
           IKEA Comp Art No
-          <input type="text" name="IKEA Comp Art No">
-        </label>
-
-        <label>
-          NPS Reference
-          <input type="text" name="NPS Reference">
-        </label>
-
-        <label>
-          Article Type
-          <input type="text" name="Article Type">
+          <input
+            type="text"
+            id="formArticleNo"
+            name="IKEA Comp Art No"
+            readonly
+          >
         </label>
 
         <label>
           Article Name
-          <input type="text" name="Article Name">
+          <input
+            type="text"
+            id="formArticleName"
+            name="Article Name"
+            readonly
+          >
         </label>
 
         <label>
-          IKEA Supplier Name
-          <input type="text" name="IKEA Supplier Name">
+          Topliner
+          <input
+            type="text"
+            name="Topliner"
+            placeholder="Example: 150 GSM Kraftliner"
+          >
         </label>
 
         <label>
-          IKEA Supplier Number
-          <input type="text" name="IKEA Supplier Number">
+          Midliner
+          <input
+            type="text"
+            name="Midliner"
+            placeholder="Example: 125 GSM Recycled Midliner"
+          >
         </label>
 
         <label>
-          Customer Number
-          <input type="text" name="Customer Number">
-        </label>
-
-        <label>
-          Quality Code
-          <input type="text" name="Quality Code">
-        </label>
-
-        <label>
-          MSS Status
-          <input type="text" name="MSS Status">
-        </label>
-
-        <label>
-          Foot Type
-          <select name="Foot Type">
-            <option value="">Select foot type</option>
-            <option value="180x90">180x90</option>
-            <option value="140x90">140x90</option>
-            <option value="90x90">90x90</option>
+          Flute Type
+          <select name="Flute Type">
+            <option value="">Select flute type</option>
+            <option value="B Flute">B Flute</option>
+            <option value="C Flute">C Flute</option>
+            <option value="E Flute">E Flute</option>
+            <option value="F Flute">F Flute</option>
+            <option value="BC Flute">BC Flute</option>
+            <option value="BE Flute">BE Flute</option>
+            <option value="Other">Other</option>
           </select>
         </label>
 
         <label>
-          Article Net Size m2
-          <input type="number" step="0.0001" name="Article Net Size m2">
+          Deckle mm
+          <input
+            type="number"
+            name="Deckle mm"
+            step="0.01"
+            min="0"
+            placeholder="Example: 1800"
+          >
         </label>
 
         <label>
-          Weight Kg/1000pcs
-          <input type="number" step="0.0001" name="Weight Kg/1000pcs">
-        </label>
-
-        <label>
-          Status
-          <select name="Status">
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-          </select>
+          Cutting mm
+          <input
+            type="number"
+            name="Cutting mm"
+            step="0.01"
+            min="0"
+            placeholder="Example: 1200"
+          >
         </label>
 
         <label class="full-width">
           Remarks
-          <textarea name="Remarks" rows="3"></textarea>
+          <textarea
+            name="Remarks"
+            placeholder="Enter any additional information"
+          ></textarea>
         </label>
 
-        <div class="form-actions full-width">
-          <button type="submit" class="btn primary">
-            Save UID
+        <div class="button-row full-width">
+          <button
+            type="submit"
+            id="saveButton"
+            class="primary-button"
+          >
+            Save Additional Data
           </button>
 
-          <button type="reset" class="btn secondary">
+          <button
+            type="reset"
+            id="clearButton"
+            class="secondary-button"
+          >
             Clear
           </button>
         </div>
+
       </form>
-    </section>
-
-    <!-- RATE HISTORY TAB -->
-    <section id="rateTab" class="tab-content">
-      <div class="section-heading">
-        <h2>Add Rate History</h2>
-        <p>Add a new row whenever a rate changes. Do not overwrite old rates.</p>
-      </div>
-
-      <form id="rateForm" class="form-grid">
-
-        <label>
-          UID *
-          <select name="UID" class="uid-select" required>
-            <option value="">Select UID</option>
-          </select>
-        </label>
-
-        <label>
-          Effective From *
-          <input type="date" name="Effective From" required>
-        </label>
-
-        <label>
-          Effective To
-          <input type="date" name="Effective To">
-        </label>
-
-        <label>
-          Customer
-          <input type="text" name="Customer">
-        </label>
-
-        <label>
-          Currency
-          <select name="Currency">
-            <option value="THB">THB</option>
-            <option value="EUR">EUR</option>
-            <option value="INR">INR</option>
-          </select>
-        </label>
-
-        <label>
-          GSM
-          <input type="number" step="0.01" name="GSM">
-        </label>
-
-        <label>
-          BF
-          <input type="number" step="0.01" name="BF">
-        </label>
-
-        <label>
-          Cutting
-          <input type="number" step="0.01" name="Cutting">
-        </label>
-
-        <label>
-          Printing
-          <input type="number" step="0.01" name="Printing">
-        </label>
-
-        <label>
-          Gluing
-          <input type="number" step="0.01" name="Gluing">
-        </label>
-
-        <label>
-          Conversion Rate
-          <input type="number" step="0.01" name="Conversion Rate">
-        </label>
-
-        <label>
-          Packaging Rate
-          <input type="number" step="0.01" name="Packaging Rate">
-        </label>
-
-        <label>
-          Other Rate
-          <input type="number" step="0.01" name="Other Rate">
-        </label>
-
-        <label>
-          Fixed Rate
-          <input type="number" step="0.01" name="Fixed Rate">
-        </label>
-
-        <label>
-          IKEA Rate
-          <input type="number" step="0.01" name="IKEA Rate">
-        </label>
-
-        <label>
-          Final Customer Rate
-          <input type="number" step="0.01" name="Final Customer Rate">
-        </label>
-
-        <label class="full-width">
-          Remarks
-          <textarea name="Remarks" rows="3"></textarea>
-        </label>
-
-        <div class="form-actions full-width">
-          <button type="submit" class="btn primary">
-            Save Rate
-          </button>
-
-          <button type="reset" class="btn secondary">
-            Clear
-          </button>
-        </div>
-      </form>
-    </section>
-
-    <!-- MONTHLY DATA TAB -->
-    <section id="monthlyTab" class="tab-content">
-      <div class="section-heading">
-        <h2>Add Monthly Data</h2>
-        <p>Enter one row for each UID and report month.</p>
-      </div>
-
-      <form id="monthlyForm" class="form-grid">
-
-        <label>
-          Report Month *
-          <input type="month" name="Report Month" required>
-        </label>
-
-        <label>
-          UID *
-          <select name="UID" class="uid-select" required>
-            <option value="">Select UID</option>
-          </select>
-        </label>
-
-        <label>
-          Quantity PCS
-          <input type="number" step="1" name="Quantity PCS">
-        </label>
-
-        <label>
-          Confirmed Claimed Quantity
-          <input type="number" step="1" name="Confirmed Claimed Quantity">
-        </label>
-
-        <label>
-          Defect Classification
-          <select name="Defect Classification">
-            <option value="">Select defect</option>
-            <option value="10.1 Transport damage">10.1 Transport damage</option>
-            <option value="10.2 Quantity">10.2 Quantity</option>
-            <option value="10.3 Bending">10.3 Bending</option>
-            <option value="10.4 Corrugated board Delamination">
-              10.4 Corrugated board Delamination
-            </option>
-            <option value="10.5 Dimensional deviation">
-              10.5 Dimensional deviation
-            </option>
-            <option value="10.6 Cracks">10.6 Cracks</option>
-            <option value="10.7 Cutting">10.7 Cutting</option>
-            <option value="10.8 Gluing">10.8 Gluing</option>
-            <option value="10.9 Mechanical parameters">
-              10.9 Mechanical parameters
-            </option>
-            <option value="10.10 Printing">10.10 Printing</option>
-            <option value="10.11 Appearance defect">
-              10.11 Appearance defect
-            </option>
-            <option value="10.12 Other defects">
-              10.12 Other defects
-            </option>
-          </select>
-        </label>
-
-        <label>
-          End of Month Stock PCS
-          <input type="number" step="1" name="End of Month Stock PCS">
-        </label>
-
-        <label>
-          Item in PipeChain
-          <select name="Item in PipeChain">
-            <option value="">Select</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-          </select>
-        </label>
-
-        <label class="full-width">
-          Remarks
-          <textarea name="Remarks" rows="3"></textarea>
-        </label>
-
-        <div class="form-actions full-width">
-          <button type="submit" class="btn primary">
-            Save Monthly Data
-          </button>
-
-          <button type="reset" class="btn secondary">
-            Clear
-          </button>
-        </div>
-      </form>
-    </section>
-
-    <!-- MATERIAL DATA TAB -->
-    <section id="materialTab" class="tab-content">
-      <div class="section-heading">
-        <h2>Add Material Data</h2>
-        <p>Store paper, board, PM and starch as separate records.</p>
-      </div>
-
-      <form id="materialForm" class="form-grid">
-
-        <label>
-          Report Month *
-          <input type="month" name="Report Month" required>
-        </label>
-
-        <label>
-          UID *
-          <select name="UID" class="uid-select" required>
-            <option value="">Select UID</option>
-          </select>
-        </label>
-
-        <label>
-          Material Type
-          <select name="Material Type">
-            <option value="">Select type</option>
-            <option value="Paper">Paper</option>
-            <option value="Board">Board</option>
-            <option value="PM">PM</option>
-            <option value="Starch">Starch</option>
-          </select>
-        </label>
-
-        <label>
-          Material ID
-          <input type="text" name="Material ID">
-        </label>
-
-        <label>
-          Material Description
-          <input type="text" name="Material Description">
-        </label>
-
-        <label>
-          GSM
-          <input type="number" step="0.01" name="GSM">
-        </label>
-
-        <label>
-          Kg per 1000 PCS
-          <input type="number" step="0.0001" name="Kg per 1000 PCS">
-        </label>
-
-        <label>
-          Total Kg
-          <input type="number" step="0.0001" name="Total Kg">
-        </label>
-
-        <label>
-          Waste Percentage
-          <input type="number" step="0.01" name="Waste Percentage">
-        </label>
-
-        <label class="full-width">
-          Remarks
-          <textarea name="Remarks" rows="3"></textarea>
-        </label>
-
-        <div class="form-actions full-width">
-          <button type="submit" class="btn primary">
-            Save Material Data
-          </button>
-
-          <button type="reset" class="btn secondary">
-            Clear
-          </button>
-        </div>
-      </form>
-    </section>
-
-    <!-- SEARCH TAB -->
-    <section id="searchTab" class="tab-content">
-      <div class="section-heading">
-        <h2>Search UID</h2>
-        <p>View master details, rates, monthly data and materials.</p>
-      </div>
-
-      <div class="search-bar">
-        <select id="searchUID" class="uid-select">
-          <option value="">Select UID</option>
-        </select>
-
-        <button id="searchButton" class="btn primary">
-          Search
-        </button>
-      </div>
-
-      <div id="searchResult" class="search-result"></div>
     </section>
 
   </main>
 
   <script>
     /*
-      IMPORTANT:
-      Replace the value below with your Apps Script Web App URL.
+      Replace this URL with your Apps Script Web App URL.
 
       Example:
-      const API_URL =
-        'https://script.google.com/macros/s/AKfycbxxxxxxxx/exec';
+      https://script.google.com/macros/s/XXXXXXXXXXXX/exec
     */
-
     const API_URL =
       'https://script.google.com/macros/s/AKfycby8R0VO2N60Kbgd-krxXuVzp2AtoJ8ORKqk0-h6VxfFUqjRJuvLGfQX4l95Gow-GZXv3w/exec';
 
-    const state = {
-      uids: [],
-      uidRows: [],
-      rateRows: [],
-      monthlyRows: [],
-      materialRows: []
-    };
+    const uidSelect =
+      document.getElementById('uidSelect');
 
-    document.addEventListener('DOMContentLoaded', () => {
-      setupTabs();
-      setupForms();
-      setupButtons();
-      loadInitialData();
-    });
+    const form =
+      document.getElementById('extraDataForm');
 
-    function setupTabs() {
-      const tabButtons =
-        document.querySelectorAll('.tab-button');
+    const saveButton =
+      document.getElementById('saveButton');
 
-      const tabContents =
-        document.querySelectorAll('.tab-content');
+    const clearButton =
+      document.getElementById('clearButton');
 
-      tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          const targetTab = button.dataset.tab;
+    document.addEventListener(
+      'DOMContentLoaded',
+      loadUIDs
+    );
 
-          tabButtons.forEach(item => {
-            item.classList.remove('active');
-          });
+    uidSelect.addEventListener(
+      'change',
+      handleUIDSelection
+    );
 
-          tabContents.forEach(item => {
-            item.classList.remove('active');
-          });
+    form.addEventListener(
+      'submit',
+      saveExtraData
+    );
 
-          button.classList.add('active');
+    clearButton.addEventListener(
+      'click',
+      clearForm
+    );
 
-          document
-            .getElementById(targetTab)
-            .classList.add('active');
-        });
-      });
-    }
-
-    function setupForms() {
-      document
-        .getElementById('uidForm')
-        .addEventListener('submit', event => {
-          submitForm(
-            event,
-            'saveUID',
-            'UID saved successfully'
-          );
-        });
-
-      document
-        .getElementById('rateForm')
-        .addEventListener('submit', event => {
-          submitForm(
-            event,
-            'saveRate',
-            'Rate saved successfully'
-          );
-        });
-
-      document
-        .getElementById('monthlyForm')
-        .addEventListener('submit', event => {
-          submitForm(
-            event,
-            'saveMonthly',
-            'Monthly data saved successfully'
-          );
-        });
-
-      document
-        .getElementById('materialForm')
-        .addEventListener('submit', event => {
-          submitForm(
-            event,
-            'saveMaterial',
-            'Material data saved successfully'
-          );
-        });
-    }
-
-    function setupButtons() {
-      document
-        .getElementById('refreshButton')
-        .addEventListener('click', loadInitialData);
-
-      document
-        .getElementById('searchButton')
-        .addEventListener('click', searchUID);
-    }
-
-    async function loadInitialData() {
+    async function loadUIDs() {
       try {
         if (
           API_URL ===
@@ -914,330 +474,333 @@
             'error'
           );
 
+          uidSelect.innerHTML = `
+            <option value="">
+              Apps Script URL is missing
+            </option>
+          `;
+
           return;
         }
 
-        showMessage('Loading data...', 'success');
-
         const response = await fetch(
-          `${API_URL}?action=getInitialData`
+          `${API_URL}?action=getExistingUIDs`
         );
 
-        const result = await response.json();
+        const result =
+          await response.json();
 
         if (!result.success) {
           throw new Error(result.message);
         }
 
-        state.uids = result.data.uids || [];
-        state.uidRows = result.data.uidRows || [];
-        state.rateRows = result.data.rateRows || [];
-        state.monthlyRows =
-          result.data.monthlyRows || [];
-        state.materialRows =
-          result.data.materialRows || [];
+        uidSelect.innerHTML = `
+          <option value="">
+            Select existing UID
+          </option>
+        `;
 
-        updateDashboard();
-        populateUIDDropdowns();
+        result.data.forEach(item => {
+          const option =
+            document.createElement('option');
+
+          option.value = item.UID;
+
+          option.textContent =
+            `${item.UID} - ${
+              item['Article Name'] || ''
+            }`;
+
+          option.dataset.articleNo =
+            item['IKEA Comp Art No'] || '';
+
+          option.dataset.articleName =
+            item['Article Name'] || '';
+
+          option.dataset.nps =
+            item['NPS Reference'] || '';
+
+          option.dataset.supplier =
+            item['IKEA Supplier Name'] || '';
+
+          option.dataset.footType =
+            item['Foot Type'] || '';
+
+          uidSelect.appendChild(option);
+        });
 
         showMessage(
-          'Data loaded successfully',
+          'Existing UID data loaded successfully',
           'success'
         );
 
       } catch (error) {
         showMessage(
-          'Could not connect to Apps Script: ' +
+          'Could not load existing UIDs: ' +
           error.message,
           'error'
         );
+
+        uidSelect.innerHTML = `
+          <option value="">
+            Could not load UIDs
+          </option>
+        `;
       }
     }
 
-    function updateDashboard() {
-      document.getElementById('totalUIDs')
-        .textContent = state.uidRows.length;
+    async function handleUIDSelection() {
+      const selectedOption =
+        uidSelect.options[
+          uidSelect.selectedIndex
+        ];
 
-      document.getElementById('totalRates')
-        .textContent = state.rateRows.length;
+      const uid = uidSelect.value;
 
-      document.getElementById('totalMonthlyRecords')
-        .textContent = state.monthlyRows.length;
+      if (!uid) {
+        hideExistingDetails();
+        clearForm();
+        return;
+      }
 
-      document.getElementById('totalMaterialRecords')
-        .textContent = state.materialRows.length;
-    }
+      document.getElementById('formUID')
+        .value = uid;
 
-    function populateUIDDropdowns() {
-      const dropdowns =
-        document.querySelectorAll('.uid-select');
+      document.getElementById('formArticleNo')
+        .value =
+        selectedOption.dataset.articleNo || '';
 
-      dropdowns.forEach(dropdown => {
-        const currentValue = dropdown.value;
+      document.getElementById('formArticleName')
+        .value =
+        selectedOption.dataset.articleName || '';
 
-        dropdown.innerHTML = `
-          <option value="">Select UID</option>
-        `;
+      document.getElementById('detailUID')
+        .textContent = uid;
 
-        state.uids.forEach(item => {
-          const option =
-            document.createElement('option');
+      document.getElementById('detailArticleNo')
+        .textContent =
+        selectedOption.dataset.articleNo || '-';
 
-          option.value = item.uid;
+      document.getElementById('detailArticleName')
+        .textContent =
+        selectedOption.dataset.articleName || '-';
 
-          option.textContent =
-            `${item.uid} - ${item.articleName || ''}`;
+      document.getElementById('detailNPS')
+        .textContent =
+        selectedOption.dataset.nps || '-';
 
-          dropdown.appendChild(option);
-        });
+      document.getElementById('detailSupplier')
+        .textContent =
+        selectedOption.dataset.supplier || '-';
 
-        dropdown.value = currentValue;
-      });
-    }
+      document.getElementById('detailFootType')
+        .textContent =
+        selectedOption.dataset.footType || '-';
 
-    async function submitForm(
-      event,
-      action,
-      successMessage
-    ) {
-      event.preventDefault();
-
-      const form = event.target;
-      const data = formToObject(form);
-      const submitButton =
-        form.querySelector('button[type="submit"]');
+      document
+        .getElementById('existingDetails')
+        .classList.remove('hidden');
 
       try {
-        submitButton.disabled = true;
-        submitButton.textContent = 'Saving...';
+        document.getElementById('loadingText')
+          .textContent =
+          'Checking existing additional data...';
 
-        const response = await fetch(API_URL, {
-          method: 'POST',
-          body: JSON.stringify({
-            action: action,
-            data: data
-          })
-        });
+        const response = await fetch(
+          `${API_URL}&action=getExtraData&uid=${
+            encodeURIComponent(uid)
+          }`
+        );
 
-        const result = await response.json();
+        const result =
+          await response.json();
 
         if (!result.success) {
           throw new Error(result.message);
         }
 
-        showMessage(successMessage, 'success');
+        if (result.data) {
+          fillExistingExtraData(result.data);
 
-        form.reset();
+          showMessage(
+            'Existing additional data loaded. You can update it.',
+            'success'
+          );
+        } else {
+          clearAdditionalFields();
 
-        await loadInitialData();
+          showMessage(
+            'No additional data found. Enter new values.',
+            'success'
+          );
+        }
 
       } catch (error) {
         showMessage(
-          'Save failed: ' + error.message,
+          'Could not check additional data: ' +
+          error.message,
           'error'
         );
 
       } finally {
-        submitButton.disabled = false;
-
-        if (action === 'saveUID') {
-          submitButton.textContent = 'Save UID';
-        }
-
-        if (action === 'saveRate') {
-          submitButton.textContent = 'Save Rate';
-        }
-
-        if (action === 'saveMonthly') {
-          submitButton.textContent =
-            'Save Monthly Data';
-        }
-
-        if (action === 'saveMaterial') {
-          submitButton.textContent =
-            'Save Material Data';
-        }
+        document.getElementById('loadingText')
+          .textContent = '';
       }
     }
 
-    function formToObject(form) {
-      const formData = new FormData(form);
+    function fillExistingExtraData(data) {
+      const fields = [
+        'Topliner',
+        'Midliner',
+        'Flute Type',
+        'Deckle mm',
+        'Cutting mm',
+        'Remarks'
+      ];
+
+      fields.forEach(field => {
+        const input =
+          form.elements[field];
+
+        if (input) {
+          input.value = data[field] || '';
+        }
+      });
+    }
+
+    function clearAdditionalFields() {
+      const fields = [
+        'Topliner',
+        'Midliner',
+        'Flute Type',
+        'Deckle mm',
+        'Cutting mm',
+        'Remarks'
+      ];
+
+      fields.forEach(field => {
+        const input =
+          form.elements[field];
+
+        if (input) {
+          input.value = '';
+        }
+      });
+    }
+
+    function clearForm() {
+      clearAdditionalFields();
+
+      const selectedUID =
+        uidSelect.value;
+
+      if (selectedUID) {
+        document.getElementById('formUID')
+          .value = selectedUID;
+
+        const selectedOption =
+          uidSelect.options[
+            uidSelect.selectedIndex
+          ];
+
+        document.getElementById('formArticleNo')
+          .value =
+          selectedOption.dataset.articleNo || '';
+
+        document.getElementById('formArticleName')
+          .value =
+          selectedOption.dataset.articleName || '';
+      }
+    }
+
+    function hideExistingDetails() {
+      document
+        .getElementById('existingDetails')
+        .classList.add('hidden');
+
+      document.getElementById('loadingText')
+        .textContent = '';
+    }
+
+    async function saveExtraData(event) {
+      event.preventDefault();
+
+      const uid =
+        document.getElementById('formUID').value;
+
+      if (!uid) {
+        showMessage(
+          'Please select an existing UID first.',
+          'error'
+        );
+
+        return;
+      }
+
+      const formData =
+        new FormData(form);
+
       const data = {};
 
       formData.forEach((value, key) => {
         data[key] = value;
       });
 
-      return data;
-    }
-
-    function showMessage(message, type) {
-      const box =
-        document.getElementById('messageBox');
-
-      box.textContent = message;
-      box.className = `message ${type}`;
-
-      window.clearTimeout(showMessage.timeout);
-
-      showMessage.timeout = window.setTimeout(() => {
-        box.className = 'message hidden';
-      }, 5000);
-    }
-
-    async function searchUID() {
-      const uid =
-        document.getElementById('searchUID').value;
-
-      const resultBox =
-        document.getElementById('searchResult');
-
-      if (!uid) {
-        resultBox.innerHTML = `
-          <div class="empty-result">
-            Please select a UID.
-          </div>
-        `;
-
-        return;
-      }
-
       try {
-        resultBox.innerHTML = `
-          <div class="empty-result">
-            Loading UID details...
-          </div>
-        `;
+        saveButton.disabled = true;
+        saveButton.textContent = 'Saving...';
 
-        const response = await fetch(
-          `${API_URL}&action=getUIDDetails&uid=${
-            encodeURIComponent(uid)
-          }`
-        );
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'saveExtraData',
+            data: data
+          })
+        });
 
-        const result = await response.json();
+        const result =
+          await response.json();
 
         if (!result.success) {
           throw new Error(result.message);
         }
 
-        displayUIDDetails(result.data);
+        showMessage(
+          'Additional data saved successfully.',
+          'success'
+        );
 
       } catch (error) {
-        resultBox.innerHTML = `
-          <div class="empty-result">
-            ${escapeHtml(error.message)}
-          </div>
-        `;
+        showMessage(
+          'Could not save data: ' +
+          error.message,
+          'error'
+        );
+
+      } finally {
+        saveButton.disabled = false;
+        saveButton.textContent =
+          'Save Additional Data';
       }
     }
 
-    function displayUIDDetails(data) {
-      const resultBox =
-        document.getElementById('searchResult');
+    function showMessage(message, type) {
+      const messageBox =
+        document.getElementById('messageBox');
 
-      let html = '';
+      messageBox.textContent = message;
+      messageBox.className =
+        `message ${type}`;
 
-      html += `
-        <div class="result-section">
-          <h3>UID Master Details</h3>
-          ${
-            createTable(
-              data.uid ? [data.uid] : []
-            )
-          }
-        </div>
-      `;
+      window.clearTimeout(
+        showMessage.timeout
+      );
 
-      html += `
-        <div class="result-section">
-          <h3>Rate History</h3>
-          ${
-            createTable(data.rates || [])
-          }
-        </div>
-      `;
-
-      html += `
-        <div class="result-section">
-          <h3>Monthly Data</h3>
-          ${
-            createTable(data.monthly || [])
-          }
-        </div>
-      `;
-
-      html += `
-        <div class="result-section">
-          <h3>Material Data</h3>
-          ${
-            createTable(data.materials || [])
-          }
-        </div>
-      `;
-
-      resultBox.innerHTML = html;
-    }
-
-    function createTable(rows) {
-      if (!rows || rows.length === 0) {
-        return `
-          <div class="empty-result">
-            No records found.
-          </div>
-        `;
-      }
-
-      const headers = Object.keys(rows[0]);
-
-      const headerHtml = headers
-        .map(header => {
-          return `
-            <th>${escapeHtml(header)}</th>
-          `;
-        })
-        .join('');
-
-      const bodyHtml = rows
-        .map(row => {
-          const cells = headers
-            .map(header => {
-              return `
-                <td>
-                  ${escapeHtml(row[header])}
-                </td>
-              `;
-            })
-            .join('');
-
-          return `<tr>${cells}</tr>`;
-        })
-        .join('');
-
-      return `
-        <table class="data-table">
-          <thead>
-            <tr>${headerHtml}</tr>
-          </thead>
-
-          <tbody>
-            ${bodyHtml}
-          </tbody>
-        </table>
-      `;
-    }
-
-    function escapeHtml(value) {
-      if (value === null || value === undefined) {
-        return '';
-      }
-
-      return String(value)
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
+      showMessage.timeout =
+        window.setTimeout(() => {
+          messageBox.className =
+            'message hidden';
+        }, 5000);
     }
   </script>
 
